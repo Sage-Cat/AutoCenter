@@ -25,6 +25,16 @@ void MainWindow::closeTab(int index)
     ui->tabWidget->removeTab(index);
 }
 
+void MainWindow::openTabLists(doc_type type)
+{
+
+}
+
+void MainWindow::openTabRecords(int ID_List)
+{
+
+}
+
 void MainWindow::on_act_allSales_triggered()
 {
 

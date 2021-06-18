@@ -16,8 +16,16 @@ public:
     QString getLastRequest() const;
     QString getLastResponse() const;
 
-    /* according server_API */
+//    void log_activity(QString UID, QString message);
 
+    /* according server_API */
+    QString add(QString table_name, QStringList *data);
+    QString del(QString table_name, QString condition);
+    QString edit(QString table_name, QString condition, QStringList *data);
+    QString get(QString table_name, QString condition);
+//    QString login(QString number, QString password);
+//    QString statistics(QString datetime_from, QString datetime_to);
+//    QString pricelist(RecordsList *recordsList);
 
 private:
     QSqlDatabase db;

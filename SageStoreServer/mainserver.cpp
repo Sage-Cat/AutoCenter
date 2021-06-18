@@ -40,43 +40,70 @@ void MainServer::newConnection()
 
 void MainServer::decode(QString request)
 {
-//    // qDebug() << "Request: " << request;
+    qDebug() << "Request: " << request;
 
-//    params = new QStringList(request.split(DELIMITER_MAIN));
-//    if(params->at(0) != "client")
-//    {
-//        qDebug() << "Received a message from an unknown sender.";
-//        return;
-//    }
-//    params->pop_front();
+    params = new QStringList(request.split(DELIMITERS[0]));
+    if(params->at(0) != "client")
+        return; // ignore incorrect request
+    params->pop_front();
 
-//    // UID
-//    UID = params->at(0);
-//    params->pop_front();
+    // UID
+    UID = params->at(0);
+    params->pop_front();
 
-//    // Command
-//    QString cmd = params->at(0);
-//    params->pop_front();
+    // Command
+    QString cmd = params->at(0);
+    params->pop_front();
 
-//    // Information
-//    QString response = "server" + DELIMITER_MAIN,
-//            log_msg = "";
-
+    // Information
+    QString response = "server" + DELIMITERS[0],
+            log_msg = "";
 
     /* DECODE */
 
+    /* --------------- ADD --------------- */
+    // add:[table_name]:[data1:data2:...] - data example: " Name_Seller='John' "
+    if(cmd == "add")
+    {
+        QString table_name = params->at(0);
+        params->pop_front();
 
+        response += dbHelper->add(table_name, params);
+    }
+    /* --------------- DEL --------------- */
+    // del:[table_name]:[condition] - condition example: " ID_List=1 "
+    else if(cmd == "del")
+    {
+        response += dbHelper->del(params->at(0), params->at(1));
+    }
+    /* --------------- EDIT --------------- */
+    // edit:[table_name]:[condition]:[data1:data2:...]
+    else if(cmd == "edit")
+    {
+        QString table_name = params->at(0);
+        params->pop_front();
+        QString condition = params->at(0);
+        params->pop_front();
 
-//    /* SEND RESPONSE TO THE CLIENT */
-//    socket->write(response.toUtf8());
-//    qDebug() << "Response: " << response;
-//    socket->flush();
-//    qDebug() << "************************";
+        response += dbHelper->edit(table_name, condition, params);
+    }
+    /* --------------- GET --------------- */
+    // get:[table_name or view_name]:[condition]
+    else if(cmd == "get")
+    {
+        response += dbHelper->get(params->at(0), params->at(1));
+    }
 
-//    /* LOG ACTIVITY */
+    /* SEND RESPONSE TO THE CLIENT */
+    socket->write(response.toUtf8());
+    qDebug() << "Response: " << response;
+    socket->flush();
+    qDebug() << "************************";
+
+    /* LOG ACTIVITY */
 //    if(log_msg != "")
 //        dbHelper->log_activity(UID, log_msg);
 
-//    delete params;
-//    params = nullptr;
+    delete params;
+    params = nullptr;
 }

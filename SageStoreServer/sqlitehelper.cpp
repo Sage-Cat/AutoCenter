@@ -38,3 +38,52 @@ SQLiteHelper::SQLiteHelper(QObject *parent, QString db_name) :
     }
 
 }
+
+QString SQLiteHelper::add(QString table_name, QStringList *data)
+{
+    // INSERT INTO table VALUES(Name_Seller='John', ...);
+    request = "INSERT INTO " + table_name + " VALUES(" + data->join(", ") + ");";
+
+    return QString::number(qry->exec(request));
+}
+
+QString SQLiteHelper::del(QString table_name, QString condition)
+{
+    // DELETE (everything is fine cuz foreign key set "ON DELETE CASCADE"
+    request = "DELETE FROM " + table_name + " WHERE " + condition;
+
+    return QString::number(qry->exec(request)); // maybe always true
+}
+
+QString SQLiteHelper::edit(QString table_name, QString condition, QStringList *data)
+{
+    request = "UPDATE " + table_name + " SET " + data->join(", ") + "WHERE " + condition;
+
+    return QString::number(qry->exec(request));
+}
+
+QString SQLiteHelper::get(QString table_name, QString condition)
+{
+    request = "SELECT * FROM " + table_name + " WHERE " + condition;
+
+    response = "";
+    if(qry->exec(request))
+    {
+        // if query is fine
+        while(qry->next())
+        {
+            for(int i = 0; i < qry->record().count(); ++i)
+               response += qry->value(i).toString() + DELIMITERS[delims::secondary];
+
+            // replacing the last rows delimiter with primary delimiter, due to the end of the row
+            response.remove(response.length() - DELIMITERS[delims::secondary].length(), DELIMITERS[delims::secondary].length());
+            response += DELIMITERS[delims::primary];
+        }
+        return response.mid(0, response.length() - DELIMITERS[delims::primary].length()); // return without the last DELIMITERS[delims::primary]
+    }
+    else
+    {
+        qDebug() << "get error:" << qry->lastError().text();
+        return "-1"; // return error
+    }
+}
