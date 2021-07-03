@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QIcon>
+
+#include "widgets/lists.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -25,9 +29,17 @@ void MainWindow::closeTab(int index)
     ui->tabWidget->removeTab(index);
 }
 
-void MainWindow::openTabLists(doc_type type)
+void MainWindow::openTabLists(Op_type type)
 {
+    Lists *tab = new Lists(this, type);
+    QString label = "";
 
+    if(type == Op_type::sale)
+        label = "Усі продажі";
+    else
+        label = "Усі надходження";
+
+    ui->tabWidget->addTab(tab, QIcon(":/icons/page.png"), label);
 }
 
 void MainWindow::openTabRecords(int ID_List)
@@ -37,5 +49,10 @@ void MainWindow::openTabRecords(int ID_List)
 
 void MainWindow::on_act_allSales_triggered()
 {
+    openTabLists(Op_type::sale);
+}
 
+void MainWindow::on_act_allReceipts_triggered()
+{
+    openTabLists(Op_type::receipt);
 }

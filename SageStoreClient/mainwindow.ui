@@ -1016,26 +1016,6 @@ QTabWidget::tab-bar {
     <string>Усі реалізації</string>
    </property>
   </action>
-  <action name="act_accounts">
-   <property name="text">
-    <string>Рахунки</string>
-   </property>
-  </action>
-  <action name="act_expenceInvoices">
-   <property name="text">
-    <string>Видаткові накладні</string>
-   </property>
-  </action>
-  <action name="act_returnInvoices">
-   <property name="text">
-    <string>Накладні на повернення</string>
-   </property>
-  </action>
-  <action name="act_taxInvoices">
-   <property name="text">
-    <string>Податкові накладні</string>
-   </property>
-  </action>
   <action name="act_allReceipts">
    <property name="text">
     <string>Усі надходження</string>

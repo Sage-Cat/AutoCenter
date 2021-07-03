@@ -10,16 +10,21 @@ CONFIG += c++14
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    networkcommunication.cpp \
+    widgets/lists.cpp
 
 
 HEADERS += \
     mainwindow.h \
-    statements.h
+    networkcommunication.h \
+    statements.h \
+    widgets/lists.h
 
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    widgets/lists.ui
 
 
 # Default rules for deployment.

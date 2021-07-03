@@ -20,10 +20,11 @@ public:
 private slots:
     void closeTab(int);
 
-    void openTabLists(doc_type type);
+    void openTabLists(Op_type type);
     void openTabRecords(int ID_List);
 
     void on_act_allSales_triggered();
+    void on_act_allReceipts_triggered();
 
 private:
     Ui::MainWindow *ui;

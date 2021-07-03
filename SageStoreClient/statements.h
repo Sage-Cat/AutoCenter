@@ -5,12 +5,14 @@
 #include <QVector>
 #include <QStringList>
 
+#include <QDebug>
+
 //! List[N][M], where
 //! N - number of rows,
 //! M - number of columns
 typedef std::vector<QStringList> RecordsList;
 
-enum doc_type {
+enum Op_type {
     sale = 0,
     receipt
 };
