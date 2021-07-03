@@ -12,6 +12,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     networkcommunication.cpp \
+    tcpclient.cpp \
+    widgets/basewidget.cpp \
     widgets/lists.cpp
 
 
@@ -19,6 +21,8 @@ HEADERS += \
     mainwindow.h \
     networkcommunication.h \
     statements.h \
+    tcpclient.h \
+    widgets/basewidget.h \
     widgets/lists.h
 
 

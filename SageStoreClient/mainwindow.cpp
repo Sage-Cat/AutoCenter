@@ -7,9 +7,13 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    tcpClient(new TcpClient())
 {
     ui->setupUi(this);
+
+    // Network connections
+    connect(tcpClient, SIGNAL(errorDetected(QString)), this, SLOT(handleCriticalError(QString)));
 
     /* Authorization and Registration */
     this->setHidden(true);
@@ -29,17 +33,19 @@ void MainWindow::closeTab(int index)
     ui->tabWidget->removeTab(index);
 }
 
-void MainWindow::openTabLists(Op_type type)
+void MainWindow::openTabLists(OperationType type)
 {
-    Lists *tab = new Lists(this, type);
+    Lists *tab = new Lists(nullptr, type);
     QString label = "";
 
-    if(type == Op_type::sale)
+    if(type == OperationType::sale)
         label = "Усі продажі";
     else
         label = "Усі надходження";
 
     ui->tabWidget->addTab(tab, QIcon(":/icons/page.png"), label);
+
+    connect(tab, &Lists::tabRecordsRequested, this, &MainWindow::openTabRecords);
 }
 
 void MainWindow::openTabRecords(int ID_List)
@@ -47,12 +53,17 @@ void MainWindow::openTabRecords(int ID_List)
 
 }
 
+void MainWindow::handleCriticalError(QString message)
+{
+    QMessageBox::critical(this, "Помилка", message, QMessageBox::Ok);
+}
+
 void MainWindow::on_act_allSales_triggered()
 {
-    openTabLists(Op_type::sale);
+    openTabLists(OperationType::sale);
 }
 
 void MainWindow::on_act_allReceipts_triggered()
 {
-    openTabLists(Op_type::receipt);
+    openTabLists(OperationType::receipt);
 }

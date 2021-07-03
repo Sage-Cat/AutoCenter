@@ -4,6 +4,8 @@
 #include <QString>
 #include <QVector>
 #include <QStringList>
+#include <QHostAddress>
+#include <QMessageBox>
 
 #include <QDebug>
 
@@ -12,15 +14,21 @@
 //! M - number of columns
 typedef std::vector<QStringList> RecordsList;
 
-enum Op_type {
+enum OperationType {
     sale = 0,
     receipt
 };
 
 // TCP Connection
-//const QString DEFAULT_HOSTNAME = "google.com";
-//const int DEFAULT_PORT = 80;
-//const QStringList DELIMITERS{":::", "|||"};
+const QHostAddress DEFAULT_HOSTNAME = QHostAddress::LocalHost;
+const int DEFAULT_PORT = 9999;
+
+//! Consists of delimiters for transfering data (decode messages using it in direct 0,1... order)
+const QStringList DELIMITERS{":::", "|||"};
+enum delims {
+    primary = 0,
+    secondary
+};
 
 //// Customers & Sellers
 //const QStringList CUSTOMERS_COLUMNS_NAMES{"Ім'я", "IBAN", "Банк", "ЄДРПОУ", "ІПН", "Адреса", "Телефон", "Ел. пошта", "ID"};

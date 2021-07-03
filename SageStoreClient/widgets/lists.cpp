@@ -1,8 +1,8 @@
 #include "lists.h"
 #include "ui_lists.h"
 
-Lists::Lists(QWidget *parent, Op_type type) :
-    QWidget(parent),
+Lists::Lists(BaseWidget *parent, OperationType type) :
+    BaseWidget(parent),
     ui(new Ui::Lists),
     type(type)
 {

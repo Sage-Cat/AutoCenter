@@ -49,7 +49,7 @@ QString SQLiteHelper::add(QString table_name, QStringList *data)
 
 QString SQLiteHelper::del(QString table_name, QString condition)
 {
-    // DELETE (everything is fine cuz foreign key set "ON DELETE CASCADE"
+    // DELETE (everything is fine cuz foreign key set "ON DELETE CASCADE")
     request = "DELETE FROM " + table_name + " WHERE " + condition;
 
     return QString::number(qry->exec(request)); // maybe always true

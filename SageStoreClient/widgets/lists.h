@@ -1,21 +1,18 @@
 #ifndef LISTS_H
 #define LISTS_H
 
-#include <QWidget>
-
-#include "networkcommunication.h"
-#include "statements.h"
+#include "basewidget.h"
 
 namespace Ui {
 class Lists;
 }
 
-class Lists : public QWidget, public NetworkCommunication
+class Lists : public BaseWidget
 {
     Q_OBJECT
 
 public:
-    explicit Lists(QWidget *parent = nullptr, Op_type type = Op_type::sale);
+    explicit Lists(BaseWidget *parent = nullptr, OperationType type = OperationType::sale);
     ~Lists();
 
 signals:
@@ -27,14 +24,12 @@ private slots:
     void on_btn_refresh_clicked();
 
     void on_radio_all_clicked();
-
     void on_radio_org_clicked();
-
     void on_radio_not_org_clicked();
 
 private:
     Ui::Lists *ui;
-    Op_type type;
+    OperationType type;
 };
 
 #endif // LISTS_H

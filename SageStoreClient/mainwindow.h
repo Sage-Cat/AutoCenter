@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "statements.h"
+#include "tcpclient.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,17 +18,19 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private slots:
+public slots:
     void closeTab(int);
 
-    void openTabLists(Op_type type);
+    void openTabLists(OperationType type);
     void openTabRecords(int ID_List);
+
+    void handleCriticalError(QString message);
 
     void on_act_allSales_triggered();
     void on_act_allReceipts_triggered();
 
 private:
     Ui::MainWindow *ui;
-
+    TcpClient *tcpClient;
 };
 #endif // MAINWINDOW_H

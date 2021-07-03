@@ -41,19 +41,19 @@ RecordsList* XmlParser::parseOmegaPriceList(const QString &xmlData)
     int miss_count = 0; // counter for errors
     while(reader.readNextStartElement() && miss_count < MAX_NUMBER_OF_MISSES)
     {
-        if(reader.name() == "Прайс")
+        if(reader.name().toString() == "Прайс")
         {
             miss_count = 0;
 
             while(reader.readNextStartElement())
             {
-                if(reader.name() == "KART")        Code            = reader.readElementText(); else
-                if(reader.name() == "KODKAT")      Catalog         = reader.readElementText(); else
-                if(reader.name() == "KODTNVED")    TNVED           = reader.readElementText(); else
-                if(reader.name() == "NAIM")        Name_Product    = reader.readElementText(); else
-                if(reader.name() == "NAIMUKR")     Name_Product    = reader.readElementText(); else
-                if(reader.name() == "BAZED")       Unit            = reader.readElementText(); else
-                if(reader.name() == "MINCENA")     Price           = reader.readElementText(); else reader.skipCurrentElement();
+                if(reader.name().toString() == "KART")        Code            = reader.readElementText(); else
+                if(reader.name().toString() == "KODKAT")      Catalog         = reader.readElementText(); else
+                if(reader.name().toString() == "KODTNVED")    TNVED           = reader.readElementText(); else
+                if(reader.name().toString() == "NAIM")        Name_Product    = reader.readElementText(); else
+                if(reader.name().toString() == "NAIMUKR")     Name_Product    = reader.readElementText(); else
+                if(reader.name().toString() == "BAZED")       Unit            = reader.readElementText(); else
+                if(reader.name().toString() == "MINCENA")     Price           = reader.readElementText(); else reader.skipCurrentElement();
             }
 
             // PACK NEW RECORD
