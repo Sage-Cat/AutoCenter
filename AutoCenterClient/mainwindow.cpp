@@ -12,9 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    // Network connections
-    connect(tcpClient, SIGNAL(errorDetected(QString)), this, SLOT(handleCriticalError(QString)));
-
     /* Authorization and Registration */
     this->setHidden(true);
 
@@ -35,7 +32,7 @@ void MainWindow::closeTab(int index)
 
 void MainWindow::openTabLists(OperationType type)
 {
-    Lists *tab = new Lists(nullptr, type);
+    Lists *tab = new Lists(nullptr, tcpClient, type);
     QString label = "";
 
     if(type == OperationType::sale)
@@ -51,11 +48,6 @@ void MainWindow::openTabLists(OperationType type)
 void MainWindow::openTabRecords(int ID_List)
 {
 
-}
-
-void MainWindow::handleCriticalError(QString message)
-{
-    QMessageBox::critical(this, "Помилка", message, QMessageBox::Ok);
 }
 
 void MainWindow::on_act_allSales_triggered()

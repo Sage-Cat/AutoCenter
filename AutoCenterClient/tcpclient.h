@@ -17,14 +17,15 @@ public:
     void setAdmin(bool value);
 
 public slots:
-     QString sendAndGetResponse(const QString &request);
+    void sendAndGetResponse(const QString &request);
 
 signals:
-     void errorDetected(QString message);
+    void responseReceived(QString);
+    void errorDetected(QString);
 
 private /* methods */:
-     bool connect();
-     void disconect();
+    bool connect();
+    void disconect();
 
 private:
     QTcpSocket *socket;

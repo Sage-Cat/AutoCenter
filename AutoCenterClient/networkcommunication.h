@@ -2,19 +2,23 @@
 #define NETWORKCOMMUNICATION_H
 
 #include <QObject>
+#include "tcpclient.h"
 
-class NetworkCommunication
+class NetworkCommunication : public QObject
 {
+    Q_OBJECT
+
 public:
-    NetworkCommunication();
+    NetworkCommunication(const TcpClient *tcpClient);
 
     QString getResponse() const;
 
 signals:
-    void requestCreated(QString request);
+    void requestReady(QString request);
 
 public slots:
-    virtual void setResponse(QString response);
+    void setResponse(QString response);
+    void handleCriticalError(QString message);
 
 private:
     QString response;

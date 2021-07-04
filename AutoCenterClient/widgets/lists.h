@@ -1,18 +1,20 @@
 #ifndef LISTS_H
 #define LISTS_H
 
-#include "basewidget.h"
+#include <QWidget>
+
+#include "networkcommunication.h"
 
 namespace Ui {
 class Lists;
 }
 
-class Lists : public BaseWidget
+class Lists : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Lists(BaseWidget *parent = nullptr, OperationType type = OperationType::sale);
+    explicit Lists(QWidget *parent = nullptr, TcpClient *tcpClient = new TcpClient, OperationType type = OperationType::sale);
     ~Lists();
 
 signals:
@@ -30,6 +32,7 @@ private slots:
 private:
     Ui::Lists *ui;
     OperationType type;
+    NetworkCommunication *networkCommunication;
 };
 
 #endif // LISTS_H

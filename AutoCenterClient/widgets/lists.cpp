@@ -1,10 +1,11 @@
 #include "lists.h"
 #include "ui_lists.h"
 
-Lists::Lists(BaseWidget *parent, OperationType type) :
-    BaseWidget(parent),
+Lists::Lists(QWidget *parent, TcpClient* tcpClient, OperationType type) :
+    QWidget(parent),
     ui(new Ui::Lists),
-    type(type)
+    type(type),
+    networkCommunication(new NetworkCommunication(tcpClient))
 {
     ui->setupUi(this);
 }

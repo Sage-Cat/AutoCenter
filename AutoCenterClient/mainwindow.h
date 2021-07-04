@@ -24,8 +24,6 @@ public slots:
     void openTabLists(OperationType type);
     void openTabRecords(int ID_List);
 
-    void handleCriticalError(QString message);
-
     void on_act_allSales_triggered();
     void on_act_allReceipts_triggered();
 

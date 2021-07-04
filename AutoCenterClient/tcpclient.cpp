@@ -31,7 +31,7 @@ bool TcpClient::isAdmin()
     return admin;
 }
 
-QString TcpClient::sendAndGetResponse(const QString &request)
+void TcpClient::sendAndGetResponse(const QString &request)
 {
     QString response = "";
     if(connect())
@@ -41,7 +41,7 @@ QString TcpClient::sendAndGetResponse(const QString &request)
         socket->write(msg);
         socket->waitForBytesWritten(2000);
 
-        /* GETING THE RESPONSE */
+        /* GETTING THE RESPONSE */
         socket->waitForReadyRead(5000);
 
         while(response.mid(0, QString("server" + DELIMITERS[delims::primary]).length())
@@ -52,16 +52,16 @@ QString TcpClient::sendAndGetResponse(const QString &request)
             else
             {
                 emit errorDetected("Сервер довго не відповідає");
-                break;
+                return;
             }
         }
 
-        // remove standart server prefix
+        /* SETTING THE RESPONSE */
         response.remove(0, QString("server" + DELIMITERS[delims::primary]).length());
+        emit responseReceived(response);
 
         disconect();
     }
-    return response;
 }
 
 void TcpClient::setUID(const QString &value)
