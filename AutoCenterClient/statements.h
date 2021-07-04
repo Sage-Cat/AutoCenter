@@ -34,9 +34,11 @@ enum delims {
 //const QStringList CUSTOMERS_COLUMNS_NAMES{"Ім'я", "IBAN", "Банк", "ЄДРПОУ", "ІПН", "Адреса", "Телефон", "Ел. пошта", "ID"};
 //const QStringList SELLERS_COLUMNS_NAMES{"Ім'я", "IBAN", "Банк", "ЄДРПОУ", "ІПН", "Адреса", "ID"};
 
-//// Lists & Records
-//const QStringList LISTS_COLUMNS_NAMES{"Коли", "Номер документа", "Продавець", "Покупець"};
-//const QStringList RECORDS_COLUMNS_NAMES{"Код", "Каталожний номер", "Код ТНВЕД", "Назва", "Одиниці", "Кількість", "Ціна"};
+// Lists & Records
+const QString TABLE_LISTS_NAME{"Lists"};
+const QStringList TABLE_LISTS_COLUMNS_NAMES{"Коли", "Номер документа", "Продавець", "Покупець"};
+const QString TABLE_RECORDS_NAME{"Records"};
+const QStringList TABLE_RECORDS_COLUMNS_NAMES{"Код", "Каталожний номер", "Код ТНВЕД", "Назва", "Одиниці", "Кількість", "Ціна"};
 
 //// Inventory
 //const QStringList INVENTORY_COLUMNS_NAMES{"Кількість", "", "Код",  "Каталожний номер", "Код ТНВЕД", "Назва", "Одиниці", ""};

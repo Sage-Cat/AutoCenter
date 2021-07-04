@@ -2,7 +2,6 @@
 
 TcpClient::TcpClient(QObject *parent, QHostAddress hostname, int port) :
     QObject(parent),
-    socket(new QTcpSocket),
     UID("-1"),
     currentHostname(hostname),
     currentPort(port)
@@ -11,6 +10,7 @@ TcpClient::TcpClient(QObject *parent, QHostAddress hostname, int port) :
 
 bool TcpClient::connect()
 {
+    socket = new QTcpSocket;
     socket->connectToHost(currentHostname, currentPort);
 
     if(!socket->waitForConnected(3000))
@@ -24,6 +24,7 @@ bool TcpClient::connect()
 void TcpClient::disconect()
 {
     socket->close();
+    delete socket;
 }
 
 bool TcpClient::isAdmin()

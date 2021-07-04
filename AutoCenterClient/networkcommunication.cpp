@@ -22,5 +22,5 @@ void NetworkCommunication::setResponse(QString response)
 
 void NetworkCommunication::handleCriticalError(QString message)
 {
-    QMessageBox::critical(nullptr, "Помилка", message, QMessageBox::Ok);
+    QMessageBox::critical(nullptr, "Помилка NetworkCommunication", message, QMessageBox::Ok);
 }

@@ -31,8 +31,8 @@ private slots:
 
 private:
     Ui::Lists *ui;
-    OperationType type;
     NetworkCommunication *networkCommunication;
+    OperationType type;
 };
 
 #endif // LISTS_H

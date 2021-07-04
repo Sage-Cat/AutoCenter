@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QThread>
 
 #include "statements.h"
 #include "tcpclient.h"
@@ -30,5 +31,6 @@ public slots:
 private:
     Ui::MainWindow *ui;
     TcpClient *tcpClient;
+    QThread *thread;
 };
 #endif // MAINWINDOW_H

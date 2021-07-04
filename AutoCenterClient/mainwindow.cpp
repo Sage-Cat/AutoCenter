@@ -7,15 +7,21 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    tcpClient(new TcpClient())
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    /* Authorization and Registration */
-    this->setHidden(true);
+    /* Network */
+    tcpClient = new TcpClient();
+    thread = new QThread;
+    tcpClient->moveToThread(thread);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    thread->start();
 
-    this->setHidden(false);
+    /* Authorization and Registration */
+//    this->setHidden(true);
+
+//    this->setHidden(false);
 
     connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
 }
