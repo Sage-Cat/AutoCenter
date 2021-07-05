@@ -1,5 +1,8 @@
 #include "tcpclient.h"
 
+QSemaphore TcpClient::s_semaphore;
+QString TcpClient::s_response;
+
 TcpClient::TcpClient(QObject *parent, QHostAddress hostname, int port) :
     QObject(parent),
     UID("-1"),
@@ -59,7 +62,9 @@ void TcpClient::sendAndGetResponse(const QString &request)
 
         /* SETTING THE RESPONSE */
         response.remove(0, QString("server" + DELIMITERS[delims::primary]).length());
-        emit responseReceived(response);
+
+        s_response = response;
+        s_semaphore.release();
 
         disconect();
     }

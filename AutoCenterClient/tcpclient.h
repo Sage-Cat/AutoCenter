@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QSemaphore>
 
 #include "statements.h"
 
@@ -16,11 +17,13 @@ public:
     void setUID(const QString &value);
     void setAdmin(bool value);
 
+    static QSemaphore s_semaphore;
+    static QString s_response;
+
 public slots:
     void sendAndGetResponse(const QString &request);
 
 signals:
-    void responseReceived(QString);
     void errorDetected(QString);
 
 private /* methods */:

@@ -9,19 +9,15 @@ class NetworkCommunication : public QObject
     Q_OBJECT
 
 public:
-    NetworkCommunication(const TcpClient *tcpClient);
+    NetworkCommunication(TcpClient *tcpClient);
 
-    QString getResponse() const;
+    QString getResponseWhenReady();
 
 signals:
     void requestReady(QString request);
 
 public slots:
-    void setResponse(QString response);
     void handleCriticalError(QString message);
-
-private:
-    QString response;
 };
 
 #endif // NETWORKCOMMUNICATION_H

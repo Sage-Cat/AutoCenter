@@ -2,22 +2,18 @@
 
 #include <QMessageBox>
 
-NetworkCommunication::NetworkCommunication(const TcpClient *tcpClient) :
-    response("")
+NetworkCommunication::NetworkCommunication(TcpClient *tcpClient)
 {
     connect(this, &NetworkCommunication::requestReady, tcpClient, &TcpClient::sendAndGetResponse);
-    connect(tcpClient, &TcpClient::responseReceived, this, &NetworkCommunication::setResponse);
     connect(tcpClient, &TcpClient::errorDetected, this, &NetworkCommunication::handleCriticalError);
 }
 
-QString NetworkCommunication::getResponse() const
+QString NetworkCommunication::getResponseWhenReady()
 {
-    return response;
-}
+    TcpClient::s_semaphore.acquire();
+    QString response = TcpClient::s_response;
 
-void NetworkCommunication::setResponse(QString response)
-{
-    this->response = response;
+    return response;
 }
 
 void NetworkCommunication::handleCriticalError(QString message)

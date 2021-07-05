@@ -4,8 +4,8 @@
 Lists::Lists(QWidget *parent, TcpClient* tcpClient, OperationType type) :
     QWidget(parent),
     ui(new Ui::Lists),
-    type(type),
-    networkCommunication(new NetworkCommunication(tcpClient))
+    networkCommunication(new NetworkCommunication(tcpClient)),
+    type(type)
 {
     ui->setupUi(this);
 
@@ -35,7 +35,7 @@ void Lists::on_btn_refresh_clicked()
     QString condition = "";
     if(type == OperationType::sale)
     {
-        condition = "IS NOT ListType=5"; // ALL except receipts
+        condition = "ListType<>5"; // ALL except receipts
     }
     else if(type == OperationType::receipt)
     {
@@ -48,10 +48,30 @@ void Lists::on_btn_refresh_clicked()
     }
 
     QStringList requestList = {
+        SERVER_API[ServerAPI::records_get],
         TABLE_LISTS_NAME,
         condition
     };
+
+    // SEND REQUEST
     emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
+
+    // GET RESPONSE (parsing it to the list of records
+    RecordsList recordsList;
+    for(auto record : networkCommunication->getResponseWhenReady().split(DELIMITERS[delims::primary]))
+        recordsList.push_back(record.split(DELIMITERS[delims::secondary]));
+
+    // seting up the tableWidget
+    ui->tableWidget->setColumnCount(TABLE_LISTS_COLUMNS_NAMES.size());
+    ui->tableWidget->setHorizontalHeaderLabels(TABLE_LISTS_COLUMNS_NAMES);
+
+    if(recordsList.size() < 1)
+        return;
+
+    ui->tableWidget->setRowCount(recordsList.size());
+    for(size_t row = 0; row < recordsList.size(); ++row)
+        for(size_t col = 0; col < recordsList.at(0).size(); ++col)
+            ui->tableWidget->setItem(row, col, new QTableWidgetItem(recordsList[row][col]));
 }
 
 void Lists::on_radio_all_clicked()

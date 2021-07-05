@@ -6,7 +6,6 @@
 #include <QStringList>
 #include <QHostAddress>
 #include <QMessageBox>
-
 #include <QDebug>
 
 //! List[N][M], where
@@ -22,12 +21,33 @@ enum OperationType {
 // TCP Connection
 const QHostAddress DEFAULT_HOSTNAME = QHostAddress::LocalHost;
 const int DEFAULT_PORT = 9999;
+const int DEFAULT_TIMEOUT_MS = 5000;
 
-//! Consists of delimiters for transfering data (decode messages using it in direct 0,1... order)
+//! All delimiters for transfering data (decode messages using it in direct 0,1... order)
 const QStringList DELIMITERS{":::", "|||"};
 enum delims {
     primary = 0,
     secondary
+};
+
+//! All types of requests that could be handled by the server
+const QStringList SERVER_API{
+    "add",
+    "del",
+    "edit",
+    "get",
+    "login",
+    "statistics",
+    "pricelist"
+};
+enum ServerAPI {
+    records_add = 0,
+    records_delete,
+    records_edit,
+    records_get,
+    login,
+    statistics,
+    pricelist
 };
 
 //// Customers & Sellers
