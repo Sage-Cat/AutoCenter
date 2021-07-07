@@ -6,8 +6,6 @@ CREATE TABLE IF NOT EXISTS Cars (
     ID_Customer INTEGER REFERENCES Customers (ID) ON DELETE CASCADE
 );
 
-
-
 |Table: Customers|
 CREATE TABLE IF NOT EXISTS Customers (
     Name_Customer TEXT,
@@ -139,6 +137,19 @@ CREATE VIEW IF NOT EXISTS Lists_view AS
            LEFT JOIN
            Customers ON Lists.ID_Customer = Customers.ID;
 
+|View: Records_view|
+CREATE VIEW IF NOT EXISTS Records_view AS
+    SELECT ProductTypes.Code,
+           ProductTypes.Catalog,
+           ProductTypes.TNVED,
+           ProductTypes.Name_Product,
+           ProductTypes.Unit,
+           Records.Count,
+           Records.Price,
+           Records.ID_List
+      FROM Records
+           LEFT JOIN
+           ProductTypes ON Records.ID_ProductType = ProductTypes.ID;
 
 
 

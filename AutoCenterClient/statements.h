@@ -54,23 +54,66 @@ enum ServerAPI {
     records_edit,
     records_get,
     login,
-    statistics,
+    stat,
     pricelist
+};
+
+//! All database tables
+const QStringList DATABASE_TABLES{
+    "Cars",
+    "Customers",
+    "Lists",
+    "ProductTypes",
+    "Records",
+    "Sellers",
+    "UserLogs",
+    "Users",
+
+     /* Views */
+    "Customer_info",
+    "Lists_view",
+    "Statistics",
+    "UsersAndCars",
+    "Records_view"
+};
+enum Tables {
+    cars = 0,
+    customers,
+    lists,
+    product_types,
+    records,
+    sellers,
+    user_logs,
+    users,
+
+    /* Views */
+    customers_info,
+    lists_view,
+    statistics,
+    users_and_cars,
+    records_view
+
 };
 
 //// Customers & Sellers
 //const QStringList CUSTOMERS_COLUMNS_NAMES{"Ім'я", "IBAN", "Банк", "ЄДРПОУ", "ІПН", "Адреса", "Телефон", "Ел. пошта", "ID"};
 //const QStringList SELLERS_COLUMNS_NAMES{"Ім'я", "IBAN", "Банк", "ЄДРПОУ", "ІПН", "Адреса", "ID"};
 
-// Lists
-const QString TABLE_LISTS_NAME{"Lists"};
-const QString VIEW_LISTS_NAME{"Lists_view"};
-const QStringList TABLE_LISTS_COLUMNS_NAMES{"Коли", "Номер документа", "Вид", "Продавець", "Покупець"};
+//! Lists
+const QStringList LISTS_COLUMNS_NAMES{"Коли", "Номер документа", "Вид", "Продавець", "Покупець"};
+// table
+const int TABLE_LISTS_DATETIME_INDEX = 1;
+const int TABLE_LISTS_SELLER_INDEX = 4;
+const int TABLE_LISTS_CUSTOMER_INDEX = 5;
+// view
+const int VIEW_LISTS_ID_INDEX = 5;
+const int VIEW_LISTS_IPN_INDEX = 6;
 
-// Records
-const QString TABLE_RECORDS_NAME{"Records"};
-const QString VIEW_RECORDS_NAME{"Records_view"};
-const QStringList TABLE_RECORDS_COLUMNS_NAMES{"Код", "Каталожний номер", "Код ТНВЕД", "Назва", "Одиниці", "Кількість", "Ціна"};
+//! Records
+const QStringList RECORDS_COLUMNS_NAMES{"Код", "Каталожний номер", "Код ТНВЕД", "Назва", "Одиниці", "Кількість", "Ціна"};
+// view
+const int VIEW_RECORDS_PRICE_INDEX = 6;
+const int VIEW_RECORDS_ID_LIST_INDEX = 7;
 
 //// Inventory
 //const QStringList INVENTORY_COLUMNS_NAMES{"Кількість", "", "Код",  "Каталожний номер", "Код ТНВЕД", "Назва", "Одиниці", ""};

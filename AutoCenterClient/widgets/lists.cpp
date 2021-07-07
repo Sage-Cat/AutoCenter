@@ -1,10 +1,10 @@
 #include "lists.h"
 #include "ui_lists.h"
 
-Lists::Lists(QWidget *parent, TcpClient* tcpClient, OperationType type) :
+Lists::Lists(QWidget *parent, NetworkCommunication* networkCommunication, OperationType type) :
     QWidget(parent),
     ui(new Ui::Lists),
-    networkCommunication(new NetworkCommunication(tcpClient)),
+    networkCommunication(networkCommunication),
     type(type)
 {
     ui->setupUi(this);
@@ -23,7 +23,7 @@ void Lists::on_btn_add_clicked()
     // INSERT INTO Lists(ID_List) VALUES(NULL)
     QStringList requestList = {
         SERVER_API[ServerAPI::records_add],
-        TABLE_LISTS_NAME + "(ID)",
+        DATABASE_TABLES[Tables::lists] + "(ID)",
         "NULL"
     };
     // send request
@@ -46,7 +46,7 @@ void Lists::on_btn_add_clicked()
 
 void Lists::on_btn_del_clicked()
 {
-    auto listOf_selected_IDs = ui->tableWidget->selectionModel()->selectedRows(ID_column_index);
+    auto listOf_selected_IDs = ui->tableWidget->selectionModel()->selectedRows(VIEW_LISTS_ID_INDEX);
     if(listOf_selected_IDs.size() < 1)
         return;
     QString ID_List = listOf_selected_IDs.at(0).data().toString();
@@ -58,7 +58,7 @@ void Lists::on_btn_del_clicked()
         // del:[table_name]:[condition]
         QStringList requestList = {
             SERVER_API[ServerAPI::records_delete],
-            TABLE_LISTS_NAME,
+            DATABASE_TABLES[Tables::lists],
             "ID=" + ID_List
         };
 
@@ -94,7 +94,7 @@ void Lists::on_btn_refresh_clicked()
 
     QStringList requestList = {
         SERVER_API[ServerAPI::records_get],
-        VIEW_LISTS_NAME,
+        DATABASE_TABLES[Tables::lists_view],
         condition
     };
 
@@ -103,7 +103,7 @@ void Lists::on_btn_refresh_clicked()
 
     // GET RESPONSE (parsing it to the list of records)
     RecordsList recordsList;
-    for(auto record : networkCommunication->getResponseWhenReady().split(DELIMITERS[delims::primary]))
+    for(const auto &record : networkCommunication->getResponseWhenReady().split(DELIMITERS[delims::primary]))
         recordsList.push_back(record.split(DELIMITERS[delims::secondary]));
 
     // seting up the tableWidget
@@ -127,13 +127,10 @@ void Lists::on_btn_refresh_clicked()
             else
                 ui->tableWidget->setItem(row, col, new QTableWidgetItem(recordsList[row][col]));
 
-    ui->tableWidget->setHorizontalHeaderLabels(TABLE_LISTS_COLUMNS_NAMES);
+    ui->tableWidget->setHorizontalHeaderLabels(LISTS_COLUMNS_NAMES);
 
-    ID_column_index = column_count - 2;
-    IPN_column_index = column_count - 1;
-
-    ui->tableWidget->setColumnHidden(ID_column_index, true); // hide ID column
-    ui->tableWidget->setColumnHidden(IPN_column_index, true); // hide IPN column
+    ui->tableWidget->setColumnHidden(VIEW_LISTS_ID_INDEX, true); // hide ID column
+    ui->tableWidget->setColumnHidden(VIEW_LISTS_IPN_INDEX, true); // hide IPN column
 }
 
 void Lists::on_radio_all_clicked()
@@ -145,7 +142,7 @@ void Lists::on_radio_all_clicked()
 void Lists::on_radio_org_clicked()
 {
     for(int row = 0; row < ui->tableWidget->rowCount(); ++row)
-        if(ui->tableWidget->item(row, IPN_column_index)->data(Qt::DisplayRole) != "")
+        if(ui->tableWidget->item(row, VIEW_LISTS_IPN_INDEX)->data(Qt::DisplayRole) != "")
             ui->tableWidget->setRowHidden(row, false);
         else
             ui->tableWidget->setRowHidden(row, true);
@@ -154,8 +151,17 @@ void Lists::on_radio_org_clicked()
 void Lists::on_radio_not_org_clicked()
 {
     for(int row = 0; row < ui->tableWidget->rowCount(); ++row)
-        if(ui->tableWidget->item(row, IPN_column_index)->data(Qt::DisplayRole) == "")
+        if(ui->tableWidget->item(row, VIEW_LISTS_IPN_INDEX)->data(Qt::DisplayRole) == "")
             ui->tableWidget->setRowHidden(row, false);
         else
             ui->tableWidget->setRowHidden(row, true);
 }
+
+void Lists::on_tableWidget_cellDoubleClicked(int row, int column)
+{
+    int ID_List = ui->tableWidget->item(row, VIEW_LISTS_ID_INDEX)->data(Qt::DisplayRole).toInt();
+
+    // open records tab
+    emit tabRecordsRequested(ID_List);
+}
+

@@ -6,6 +6,7 @@
 
 #include "statements.h"
 #include "tcpclient.h"
+#include "networkcommunication.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -32,5 +33,6 @@ private:
     Ui::MainWindow *ui;
     TcpClient *tcpClient;
     QThread *thread;
+    NetworkCommunication *networkCommunication;
 };
 #endif // MAINWINDOW_H

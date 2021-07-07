@@ -14,7 +14,10 @@ class Lists : public QWidget
     Q_OBJECT
 
 public:
-    explicit Lists(QWidget *parent = nullptr, TcpClient *tcpClient = new TcpClient, OperationType type = OperationType::sale);
+    explicit Lists(QWidget *parent = nullptr,
+                   NetworkCommunication *networkCommunication = new NetworkCommunication(new TcpClient),
+                   OperationType type = OperationType::sale
+            );
     ~Lists();
 
 signals:
@@ -29,13 +32,12 @@ private slots:
     void on_radio_org_clicked();
     void on_radio_not_org_clicked();
 
+    void on_tableWidget_cellDoubleClicked(int row, int column);
+
 private:
     Ui::Lists *ui;
     NetworkCommunication *networkCommunication;
     OperationType type;
-
-    int ID_column_index;
-    int IPN_column_index;
 };
 
 #endif // LISTS_H

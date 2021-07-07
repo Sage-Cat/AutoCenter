@@ -4,6 +4,7 @@
 #include <QIcon>
 
 #include "widgets/lists.h"
+#include "widgets/records.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,14 +15,16 @@ MainWindow::MainWindow(QWidget *parent) :
     /* Network */
     tcpClient = new TcpClient();
     thread = new QThread;
+    networkCommunication = new NetworkCommunication(tcpClient);
+
     tcpClient->moveToThread(thread);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-    thread->start();
+    thread->start();   
 
     /* Authorization and Registration */
-//    this->setHidden(true);
+    this->setHidden(true);
 
-//    this->setHidden(false);
+    this->setHidden(false);
 
     connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
 }
@@ -38,7 +41,7 @@ void MainWindow::closeTab(int index)
 
 void MainWindow::openTabLists(OperationType type)
 {
-    Lists *tab = new Lists(nullptr, tcpClient, type);
+    Lists *tab = new Lists(this, networkCommunication, type);
     QString label = "";
 
     if(type == OperationType::sale)
@@ -53,7 +56,9 @@ void MainWindow::openTabLists(OperationType type)
 
 void MainWindow::openTabRecords(int ID_List)
 {
-
+    Records *tab = new Records(this, networkCommunication, ID_List);
+    ui->tabWidget->addTab(tab, QIcon(":/icons/sale.png"), "Редагування списку");
+    ui->tabWidget->setCurrentWidget(tab);
 }
 
 void MainWindow::on_act_allSales_triggered()

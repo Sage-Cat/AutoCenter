@@ -13,7 +13,8 @@ SOURCES += \
     mainwindow.cpp \
     networkcommunication.cpp \
     tcpclient.cpp \
-    widgets/lists.cpp
+    widgets/lists.cpp \
+    widgets/records.cpp
 
 
 HEADERS += \
@@ -21,12 +22,14 @@ HEADERS += \
     networkcommunication.h \
     statements.h \
     tcpclient.h \
-    widgets/lists.h
+    widgets/lists.h \
+    widgets/records.h
 
 
 FORMS += \
     mainwindow.ui \
-    widgets/lists.ui
+    widgets/lists.ui \
+    widgets/records.ui
 
 
 # Default rules for deployment.
