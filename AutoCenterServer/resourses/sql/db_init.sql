@@ -1,10 +1,11 @@
 Table: Cars|
 CREATE TABLE IF NOT EXISTS Cars (
-    ID      INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID          INTEGER PRIMARY KEY AUTOINCREMENT,
     Name_Car    TEXT,
     VIN         TEXT    NOT NULL,
-    ID_Customer INTEGER REFERENCES Customers (ID_Customer) ON DELETE CASCADE
+    ID_Customer INTEGER REFERENCES Customers (ID) ON DELETE CASCADE
 );
+
 
 
 |Table: Customers|
@@ -23,13 +24,13 @@ CREATE TABLE IF NOT EXISTS Customers (
 
 |Table: Lists|
 CREATE TABLE IF NOT EXISTS Lists (
-    ID     INTEGER  PRIMARY KEY AUTOINCREMENT,
+    ID          INTEGER  PRIMARY KEY AUTOINCREMENT,
     DateTime    DATETIME DEFAULT (datetime('now', 'localtime') )
                          NOT NULL,
     ListNumber  INTEGER,
     ListType    TEXT,
-    ID_Seller   INTEGER  REFERENCES Sellers (ID_Seller) ON DELETE CASCADE,
-    ID_Customer INTEGER  REFERENCES Customers (ID_Customer) ON DELETE CASCADE
+    ID_Seller   INTEGER  REFERENCES Sellers (ID) ON DELETE CASCADE,
+    ID_Customer INTEGER  REFERENCES Customers (ID) ON DELETE CASCADE
 );
 
 
@@ -49,12 +50,13 @@ CREATE TABLE IF NOT EXISTS ProductTypes (
 
 |Table: Records|
 CREATE TABLE IF NOT EXISTS Records (
-    ID      INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID             INTEGER PRIMARY KEY AUTOINCREMENT,
     Count          INTEGER,
     Price          DOUBLE,
-    ID_ProductType INTEGER REFERENCES ProductTypes (ID_ProductType) ON DELETE CASCADE,
-    ID_List        INTEGER REFERENCES Lists (ID_List)
+    ID_ProductType INTEGER REFERENCES ProductTypes (ID) ON DELETE CASCADE,
+    ID_List        INTEGER REFERENCES Lists (ID)
 );
+
 
 
 
@@ -72,11 +74,10 @@ CREATE TABLE IF NOT EXISTS Sellers (
 
 |Table: UserLogs|
 CREATE TABLE IF NOT EXISTS UserLogs (
-    ID  INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID      INTEGER PRIMARY KEY AUTOINCREMENT,
     Message TEXT,
-    ID_User INTEGER REFERENCES Users (ID_User) ON DELETE CASCADE
+    ID_User INTEGER REFERENCES Users (ID) ON DELETE CASCADE
 );
-
 
 
 |Table: Users|
@@ -130,12 +131,14 @@ CREATE VIEW IF NOT EXISTS Lists_view AS
            Lists.ListType,
            Sellers.Name_Seller,
            Customers.Name_Customer,
-           Lists.ID
+           Lists.ID,
+           Customers.IPN
       FROM Lists
            LEFT JOIN
            Sellers ON Lists.ID_Seller = Sellers.ID
            LEFT JOIN
            Customers ON Lists.ID_Customer = Customers.ID;
+
 
 
 

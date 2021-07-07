@@ -33,6 +33,9 @@ private:
     Ui::Lists *ui;
     NetworkCommunication *networkCommunication;
     OperationType type;
+
+    int ID_column_index;
+    int IPN_column_index;
 };
 
 #endif // LISTS_H
