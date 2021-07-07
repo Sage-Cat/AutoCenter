@@ -17,6 +17,14 @@ enum OperationType {
     sale = 0,
     receipt
 };
+const QStringList LISTTYPE_NAMES = {
+    "Рахунок",
+    "Видаткова накладна",
+    "Товарний чек",
+    "Податкові накладні",
+    "Накладні на повернення",
+    "Накладна на надходження"
+};
 
 // TCP Connection
 const QHostAddress DEFAULT_HOSTNAME = QHostAddress::LocalHost;
@@ -55,8 +63,8 @@ enum ServerAPI {
 //const QStringList SELLERS_COLUMNS_NAMES{"Ім'я", "IBAN", "Банк", "ЄДРПОУ", "ІПН", "Адреса", "ID"};
 
 // Lists & Records
-const QString TABLE_LISTS_NAME{"Lists"};
-const QStringList TABLE_LISTS_COLUMNS_NAMES{"Коли", "Номер документа", "Продавець", "Покупець"};
+const QString TABLE_LISTS_NAME{"Lists_view"};
+const QStringList TABLE_LISTS_COLUMNS_NAMES{"Коли", "Номер документа", "Вид", "Продавець", "Покупець"};
 const QString TABLE_RECORDS_NAME{"Records"};
 const QStringList TABLE_RECORDS_COLUMNS_NAMES{"Код", "Каталожний номер", "Код ТНВЕД", "Назва", "Одиниці", "Кількість", "Ціна"};
 

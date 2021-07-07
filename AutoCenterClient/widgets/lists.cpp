@@ -56,22 +56,36 @@ void Lists::on_btn_refresh_clicked()
     // SEND REQUEST
     emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
 
-    // GET RESPONSE (parsing it to the list of records
+    // GET RESPONSE (parsing it to the list of records)
     RecordsList recordsList;
     for(auto record : networkCommunication->getResponseWhenReady().split(DELIMITERS[delims::primary]))
         recordsList.push_back(record.split(DELIMITERS[delims::secondary]));
 
     // seting up the tableWidget
-    ui->tableWidget->setColumnCount(TABLE_LISTS_COLUMNS_NAMES.size());
-    ui->tableWidget->setHorizontalHeaderLabels(TABLE_LISTS_COLUMNS_NAMES);
 
     if(recordsList.size() < 1)
         return;
 
-    ui->tableWidget->setRowCount(recordsList.size());
-    for(size_t row = 0; row < recordsList.size(); ++row)
-        for(size_t col = 0; col < recordsList.at(0).size(); ++col)
-            ui->tableWidget->setItem(row, col, new QTableWidgetItem(recordsList[row][col]));
+    int row_count = recordsList.size();
+    int column_count = recordsList.at(0).size();
+
+    // setting up the data
+    ui->tableWidget->setRowCount(row_count);
+    ui->tableWidget->setColumnCount(column_count);
+    for(int row = 0; row < row_count; ++row)
+        for(int col = 0; col < column_count; ++col)
+            if(col == 2) // SPECIAL FOR ListType
+            {
+                qsizetype listType = recordsList[row][col].toUInt();
+                if(listType < LISTTYPE_NAMES.size())
+                    ui->tableWidget->setItem(row, col, new QTableWidgetItem(LISTTYPE_NAMES[listType]));
+            }
+            else
+                ui->tableWidget->setItem(row, col, new QTableWidgetItem(recordsList[row][col]));
+
+    ui->tableWidget->setHorizontalHeaderLabels(TABLE_LISTS_COLUMNS_NAMES);
+
+
 }
 
 void Lists::on_radio_all_clicked()

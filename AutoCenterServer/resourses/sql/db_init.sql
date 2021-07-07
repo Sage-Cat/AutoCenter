@@ -123,4 +123,18 @@ CREATE VIEW IF NOT EXISTS Statistics AS
            INNER JOIN
            Customers ON Lists.ID_Customer = Customers.ID_Customer;
 
+|View: Lists_view|
+CREATE VIEW IF NOT EXISTS Lists_view AS
+    SELECT Lists.DateTime,
+           Lists.ListNumber,
+           Lists.ListType,
+           Sellers.Name_Seller,
+           Customers.Name_Customer
+      FROM Lists
+           INNER JOIN
+           Sellers ON Lists.ID_Seller = Sellers.ID_Seller
+           INNER JOIN
+           Customers ON Lists.ID_Customer = Customers.ID_Customer;
+
+
 
