@@ -41,10 +41,23 @@ SQLiteHelper::SQLiteHelper(QObject *parent, QString db_name) :
 
 QString SQLiteHelper::add(QString table_name, QStringList *data)
 {
-    // INSERT INTO table VALUES(Name_Seller='John', ...);
+    // INSERT INTO table(COLUMN_NAME, ...) VALUES('John', ...);
     request = "INSERT INTO " + table_name + " VALUES(" + data->join(", ") + ");";
+    if(!qry->exec(request))
+        return "-1";
+    else
+    {
+        table_name = table_name.mid(0, table_name.indexOf('(')); // table_name without column names
 
-    return QString::number(qry->exec(request));
+        request = "SELECT IFNULL(MAX(ID), -1) FROM " + table_name;
+        if(!qry->exec(request))
+            return "-1";
+        else
+        {
+            qry->next();
+            return qry->value(0).toString();
+        }
+    }
 }
 
 QString SQLiteHelper::del(QString table_name, QString condition)

@@ -62,10 +62,14 @@ enum ServerAPI {
 //const QStringList CUSTOMERS_COLUMNS_NAMES{"Ім'я", "IBAN", "Банк", "ЄДРПОУ", "ІПН", "Адреса", "Телефон", "Ел. пошта", "ID"};
 //const QStringList SELLERS_COLUMNS_NAMES{"Ім'я", "IBAN", "Банк", "ЄДРПОУ", "ІПН", "Адреса", "ID"};
 
-// Lists & Records
-const QString TABLE_LISTS_NAME{"Lists_view"};
+// Lists
+const QString TABLE_LISTS_NAME{"Lists"};
+const QString VIEW_LISTS_NAME{"Lists_view"};
 const QStringList TABLE_LISTS_COLUMNS_NAMES{"Коли", "Номер документа", "Вид", "Продавець", "Покупець"};
+
+// Records
 const QString TABLE_RECORDS_NAME{"Records"};
+const QString VIEW_RECORDS_NAME{"Records_view"};
 const QStringList TABLE_RECORDS_COLUMNS_NAMES{"Код", "Каталожний номер", "Код ТНВЕД", "Назва", "Одиниці", "Кількість", "Ціна"};
 
 //// Inventory

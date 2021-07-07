@@ -1,6 +1,6 @@
 Table: Cars|
 CREATE TABLE IF NOT EXISTS Cars (
-    ID_Car      INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID      INTEGER PRIMARY KEY AUTOINCREMENT,
     Name_Car    TEXT,
     VIN         TEXT    NOT NULL,
     ID_Customer INTEGER REFERENCES Customers (ID_Customer) ON DELETE CASCADE
@@ -17,13 +17,13 @@ CREATE TABLE IF NOT EXISTS Customers (
     Address       TEXT,
     Number        TEXT,
     Email         TEXT,
-    ID_Customer   INTEGER PRIMARY KEY AUTOINCREMENT
+    ID   INTEGER PRIMARY KEY AUTOINCREMENT
 );
 
 
 |Table: Lists|
 CREATE TABLE IF NOT EXISTS Lists (
-    ID_List     INTEGER  PRIMARY KEY AUTOINCREMENT,
+    ID     INTEGER  PRIMARY KEY AUTOINCREMENT,
     DateTime    DATETIME DEFAULT (datetime('now', 'localtime') )
                          NOT NULL,
     ListNumber  INTEGER,
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS Lists (
 |Table: ProductTypes|
 CREATE TABLE IF NOT EXISTS ProductTypes (
     Amount         INTEGER,
-    ID_ProductType INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Code           TEXT    UNIQUE ON CONFLICT REPLACE,
     Catalog        TEXT,
     TNVED          TEXT,
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS ProductTypes (
 
 |Table: Records|
 CREATE TABLE IF NOT EXISTS Records (
-    ID_Record      INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID      INTEGER PRIMARY KEY AUTOINCREMENT,
     Count          INTEGER,
     Price          DOUBLE,
     ID_ProductType INTEGER REFERENCES ProductTypes (ID_ProductType) ON DELETE CASCADE,
@@ -66,13 +66,13 @@ CREATE TABLE IF NOT EXISTS Sellers (
     EDRPOY      TEXT,
     IPN         TEXT,
     Address     TEXT,
-    ID_Seller   INTEGER PRIMARY KEY AUTOINCREMENT
+    ID   INTEGER PRIMARY KEY AUTOINCREMENT
 );
 
 
 |Table: UserLogs|
 CREATE TABLE IF NOT EXISTS UserLogs (
-    ID_Log  INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID  INTEGER PRIMARY KEY AUTOINCREMENT,
     Message TEXT,
     ID_User INTEGER REFERENCES Users (ID_User) ON DELETE CASCADE
 );
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS UserLogs (
 
 |Table: Users|
 CREATE TABLE IF NOT EXISTS Users (
-    ID_User   INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID   INTEGER PRIMARY KEY AUTOINCREMENT,
     Name_User TEXT,
     Number    TEXT,
     Email     TEXT,
@@ -97,7 +97,7 @@ CREATE VIEW IF NOT EXISTS Customer_info AS
            Records.*
       FROM Lists
            INNER JOIN
-           Records ON Lists.ID_List = Records.ID_List;
+           Records ON Lists.ID = Records.ID_List;
 
 
 |View: UsersAndCars|
@@ -107,7 +107,7 @@ CREATE VIEW IF NOT EXISTS UsersAndCars AS
            Customers.*
       FROM Cars
            INNER JOIN
-           Customers ON Cars.ID_Customer = Customers.ID_Customer;
+           Customers ON Cars.ID_Customer = Customers.ID;
 
 
 |View: Statistics|
@@ -119,9 +119,9 @@ CREATE VIEW IF NOT EXISTS Statistics AS
            Customers.Name_Customer
       FROM Lists
            INNER JOIN
-           Records ON Lists.ID_List = Records.ID_List
+           Records ON Lists.ID = Records.ID_List
            INNER JOIN
-           Customers ON Lists.ID_Customer = Customers.ID_Customer;
+           Customers ON Lists.ID_Customer = Customers.ID;
 
 |View: Lists_view|
 CREATE VIEW IF NOT EXISTS Lists_view AS
@@ -131,10 +131,11 @@ CREATE VIEW IF NOT EXISTS Lists_view AS
            Sellers.Name_Seller,
            Customers.Name_Customer
       FROM Lists
-           INNER JOIN
-           Sellers ON Lists.ID_Seller = Sellers.ID_Seller
-           INNER JOIN
-           Customers ON Lists.ID_Customer = Customers.ID_Customer;
+           LEFT JOIN
+           Sellers ON Lists.ID_Seller = Sellers.ID
+           LEFT JOIN
+           Customers ON Lists.ID_Customer = Customers.ID;
+
 
 
 

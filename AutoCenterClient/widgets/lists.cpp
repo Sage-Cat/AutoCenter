@@ -20,7 +20,26 @@ Lists::~Lists()
 
 void Lists::on_btn_add_clicked()
 {
+    // INSERT INTO Lists(ID_List) VALUES(NULL)
+    QStringList requestList = {
+        SERVER_API[ServerAPI::records_add],
+        TABLE_LISTS_NAME + "(ID)",
+        "NULL"
+    };
+    emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
 
+    QString response = networkCommunication->getResponseWhenReady();
+    if(response == "-1")
+    {
+        QMessageBox::critical(nullptr, "Помилка Lists", "on_btn_add_clicked can't and empty record", QMessageBox::Ok);
+        return;
+    }
+
+    // open records tab
+    emit tabRecordsRequested(response.toInt());
+
+    // refresh
+    on_btn_refresh_clicked();
 }
 
 void Lists::on_btn_del_clicked()
@@ -35,7 +54,7 @@ void Lists::on_btn_refresh_clicked()
     QString condition = "";
     if(type == OperationType::sale)
     {
-        condition = "ListType<>5"; // ALL except receipts
+        condition = "ListType<>5 OR ListType IS NULL"; // ALL except receipts
     }
     else if(type == OperationType::receipt)
     {
@@ -49,7 +68,7 @@ void Lists::on_btn_refresh_clicked()
 
     QStringList requestList = {
         SERVER_API[ServerAPI::records_get],
-        TABLE_LISTS_NAME,
+        VIEW_LISTS_NAME,
         condition
     };
 
