@@ -26,8 +26,10 @@ void Lists::on_btn_add_clicked()
         TABLE_LISTS_NAME + "(ID)",
         "NULL"
     };
+    // send request
     emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
 
+    // get response
     QString response = networkCommunication->getResponseWhenReady();
     if(response == "-1")
     {
@@ -44,7 +46,32 @@ void Lists::on_btn_add_clicked()
 
 void Lists::on_btn_del_clicked()
 {
+    auto listOf_selected_IDs = ui->tableWidget->selectionModel()->selectedRows(ui->tableWidget->columnCount() - 1);
+    if(listOf_selected_IDs.size() < 1)
+        return;
+    QString ID_List = listOf_selected_IDs.at(0).data().toString();
 
+    auto result = QMessageBox::information(nullptr, "Видалення", "Ви впевнені, що хочете видалити цей запис?", QMessageBox::Yes | QMessageBox::No);
+
+    if(result == QMessageBox::Yes)
+    {
+        // del:[table_name]:[condition]
+        QStringList requestList = {
+            SERVER_API[ServerAPI::records_delete],
+            TABLE_LISTS_NAME,
+            "ID=" + ID_List
+        };
+
+
+        // send request
+        emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
+        // get response
+        if(networkCommunication->getResponseWhenReady() != "1")
+            QMessageBox::critical(nullptr, "Помилка Lists", "on_btn_del_clicked can't delete record", QMessageBox::Ok);
+
+        // refresh
+        on_btn_refresh_clicked();
+    }
 }
 
 void Lists::on_btn_refresh_clicked()
@@ -81,7 +108,6 @@ void Lists::on_btn_refresh_clicked()
         recordsList.push_back(record.split(DELIMITERS[delims::secondary]));
 
     // seting up the tableWidget
-
     if(recordsList.size() < 1)
         return;
 
@@ -104,7 +130,7 @@ void Lists::on_btn_refresh_clicked()
 
     ui->tableWidget->setHorizontalHeaderLabels(TABLE_LISTS_COLUMNS_NAMES);
 
-
+    ui->tableWidget->setColumnHidden(column_count - 1, true); // hide ID column
 }
 
 void Lists::on_radio_all_clicked()

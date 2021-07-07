@@ -129,12 +129,14 @@ CREATE VIEW IF NOT EXISTS Lists_view AS
            Lists.ListNumber,
            Lists.ListType,
            Sellers.Name_Seller,
-           Customers.Name_Customer
+           Customers.Name_Customer,
+           Lists.ID
       FROM Lists
            LEFT JOIN
            Sellers ON Lists.ID_Seller = Sellers.ID
            LEFT JOIN
            Customers ON Lists.ID_Customer = Customers.ID;
+
 
 
 
