@@ -146,7 +146,8 @@ CREATE VIEW IF NOT EXISTS Records_view AS
            ProductTypes.Unit,
            Records.Count,
            Records.Price,
-           Records.ID_List
+           Records.ID_List,
+           Records.ID
       FROM Records
            LEFT JOIN
            ProductTypes ON Records.ID_ProductType = ProductTypes.ID;

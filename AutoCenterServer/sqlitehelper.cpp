@@ -70,7 +70,7 @@ QString SQLiteHelper::del(QString table_name, QString condition)
 
 QString SQLiteHelper::edit(QString table_name, QString condition, QStringList *data)
 {
-    request = "UPDATE " + table_name + " SET " + data->join(", ") + "WHERE " + condition;
+    request = "UPDATE " + table_name + " SET " + data->join(", ") + " WHERE " + condition;
 
     return QString::number(qry->exec(request));
 }

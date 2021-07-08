@@ -1,16 +1,21 @@
 #include "records.h"
 #include "ui_records.h"
 
+#include <QVector>
+
 Records::Records(QWidget *parent, NetworkCommunication *networkCommunication, int ID_List) :
     QWidget(parent),
     ui(new Ui::Records),
     networkCommunication(networkCommunication),
-    ID_List(ID_List)
+    ID_List(ID_List),
+    ignore_combobox_index_changing(true),
+    ignore_tableWidget_cells_changing(true)
 {
     ui->setupUi(this);
 
-    // set information about current customer, seller and datetime
+    // set gui
     init_graphical_widgets();
+    ignore_combobox_index_changing = false;
 }
 
 Records::~Records()
@@ -20,26 +25,42 @@ Records::~Records()
 
 void Records::on_comboBox_Customer_currentIndexChanged(int index)
 {
-    // edit:[table_name]:[condition]:[data1:data2:...]
+    if(!ignore_combobox_index_changing)
+    {
+        // edit:[table_name]:[condition]:[data1:data2:...]
 
-    // UPDATE Lists SET ID_Customer=index  WHERE ID=ID_List
-    QStringList requestList = {
-        SERVER_API[ServerAPI::records_edit],
-        DATABASE_TABLES[Tables::lists],
-        "ID=" + QString::number(ID_List),
-        "ID_Customer=" + QString::number(index)
-    };
+        // UPDATE Lists SET ID_Customer=index  WHERE ID=ID_List
+        QStringList requestList = {
+            SERVER_API[ServerAPI::records_edit],
+            DATABASE_TABLES[Tables::lists],
+            "ID=" + QString::number(ID_List),
+            "ID_Customer=" + QString::number(customers_indexToID[index])
+        };
+
+        emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
+
+        if(networkCommunication->getResponseWhenReady() != "1")
+            QMessageBox::critical(nullptr, "Помилка Records", "on_comboBox_Customer_currentIndexChanged", QMessageBox::Ok);
+    }
 }
 
 void Records::on_comboBox_Seller_currentIndexChanged(int index)
 {
-    // UPDATE Lists SET ID_Seller=index  WHERE ID=ID_List
-    QStringList requestList = {
-        SERVER_API[ServerAPI::records_edit],
-        DATABASE_TABLES[Tables::lists],
-        "ID=" + QString::number(ID_List),
-        "ID_Seller=" + QString::number(index)
-    };
+    if(!ignore_combobox_index_changing)
+    {
+        // UPDATE Lists SET ID_Seller=index  WHERE ID=ID_List
+        QStringList requestList = {
+            SERVER_API[ServerAPI::records_edit],
+            DATABASE_TABLES[Tables::lists],
+            "ID=" + QString::number(ID_List),
+            "ID_Seller=" + QString::number(sellers_indexToID[index])
+        };
+
+        emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
+
+        if(networkCommunication->getResponseWhenReady() != "1")
+            QMessageBox::critical(nullptr, "Помилка Records", "on_comboBox_Seller_currentIndexChanged", QMessageBox::Ok);
+    }
 }
 
 void Records::init_graphical_widgets()
@@ -60,11 +81,17 @@ void Records::init_graphical_widgets()
     ui->line_datetime->setText(record.at(TABLE_LISTS_DATETIME_INDEX));
 
     // set comboboxes
-    ui->comboBox_Seller->addItems(getAllSellersNames());
-    ui->comboBox_Seller->setCurrentIndex(record.at(TABLE_LISTS_SELLER_INDEX).toInt());
+    QStringList sellers(getAllSellersNames_and_setIndexToID());
+    ui->comboBox_Seller->addItems(sellers);
+    ui->comboBox_Seller->setCurrentIndex(
+                sellers_indexToID.indexOf(record.at(TABLE_LISTS_SELLER_INDEX).toInt())
+            );
 
-    ui->comboBox_Customer->addItems(getAllCustomersNames());
-    ui->comboBox_Customer->setCurrentIndex(record.at(TABLE_LISTS_CUSTOMER_INDEX).toInt());
+    QStringList customers(getAllCustomersNames_and_setIndexToID());
+    ui->comboBox_Customer->addItems(customers);
+    ui->comboBox_Customer->setCurrentIndex(
+                customers_indexToID.indexOf(record.at(TABLE_LISTS_CUSTOMER_INDEX).toInt())
+                );
 
     // set tableWidget & set line_sum
     on_btn_refresh_clicked();
@@ -72,14 +99,48 @@ void Records::init_graphical_widgets()
 
 void Records::update_line_sum()
 {
+    QVector<int> counts;
     double sum = 0.0;
     for(int row = 0; row < ui->tableWidget->rowCount(); ++row)
-        sum += ui->tableWidget->item(row, VIEW_RECORDS_PRICE_INDEX)->data(Qt::DisplayRole).toDouble();
+        counts.push_back(ui->tableWidget->item(row, VIEW_RECORDS_COUNT_INDEX)->data(Qt::DisplayRole).toInt());
+
+    for(int row = 0; row < ui->tableWidget->rowCount(); ++row)
+        sum += counts[row] * ui->tableWidget->item(row, VIEW_RECORDS_PRICE_INDEX)->data(Qt::DisplayRole).toDouble();
 
     ui->line_sum->setText(QString::number(sum, 'f', 2));
 }
 
-QStringList Records::getAllCustomersNames()
+void Records::edit_cell(int row, QString data)
+{
+    QStringList requestList = {
+        SERVER_API[ServerAPI::records_edit],
+        DATABASE_TABLES[Tables::records],
+        "ID=" + ui->tableWidget->item(row, VIEW_RECORDS_ID_INDEX)->data(Qt::DisplayRole).toString(),
+        data
+    };
+
+    emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
+
+    if(networkCommunication->getResponseWhenReady() != "1")
+        QMessageBox::critical(nullptr, "Помилка Records", "on_tableWidget_itemChanged Count", QMessageBox::Ok);
+}
+
+QString Records::find_ID_ProductType_by_Code(QString code)
+{
+    QStringList requestList = {
+        SERVER_API[ServerAPI::records_get],
+        DATABASE_TABLES[Tables::product_types],
+        "Code='" + code + "'"
+    };
+
+    emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
+
+    QString response = networkCommunication->getResponseWhenReady();
+
+    return response.split(DELIMITERS[delims::secondary]).at(TABLE_PRODUCTTYPES_ID_INDEX);
+}
+
+QStringList Records::getAllCustomersNames_and_setIndexToID()
 {
     // SELECT * FROM Customers WHERE TRUE
     QStringList requestList = {
@@ -89,14 +150,20 @@ QStringList Records::getAllCustomersNames()
     };
     emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
 
+    customers_indexToID.clear();
+
     QStringList listOf_Customers_Names;
     for(const auto &record : networkCommunication->getResponseWhenReady().split(DELIMITERS[delims::primary]))
-        listOf_Customers_Names << record.split(DELIMITERS[delims::secondary]).at(0);
+    {
+        QStringList row = record.split(DELIMITERS[delims::secondary]);
+        listOf_Customers_Names << row.at(TABLE_CUSTOMERS_NAMES_INDEX);
+        customers_indexToID.push_back(row.at(TABLE_CUSTOMERS_ID_INDEX).toInt());
+    }
 
     return listOf_Customers_Names;
 }
 
-QStringList Records::getAllSellersNames()
+QStringList Records::getAllSellersNames_and_setIndexToID()
 {
     // SELECT * FROM Customers WHERE TRUE
     QStringList requestList = {
@@ -106,16 +173,23 @@ QStringList Records::getAllSellersNames()
     };
     emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
 
+    sellers_indexToID.clear();
+
     QStringList listOf_Sellers_Names;
     for(const auto &record : networkCommunication->getResponseWhenReady().split(DELIMITERS[delims::primary]))
-        listOf_Sellers_Names << record.split(DELIMITERS[delims::secondary]).at(0);
+    {
+        QStringList row = record.split(DELIMITERS[delims::secondary]);
+        listOf_Sellers_Names << row.at(TABLE_SELLERS_NAMES_INDEX);
+        sellers_indexToID.push_back(row.at(TABLE_SELLERS_ID_INDEX).toInt());
+    }
 
     return listOf_Sellers_Names;
 }
 
-
 void Records::on_btn_refresh_clicked()
 {
+    ignore_tableWidget_cells_changing = true;
+
     // SELECT * FROM Records WHERE ID_List=ID_List
     QStringList requestList = {
         SERVER_API[ServerAPI::records_get],
@@ -130,26 +204,110 @@ void Records::on_btn_refresh_clicked()
     for(const auto &record : networkCommunication->getResponseWhenReady().split(DELIMITERS[delims::primary]))
         recordsList.push_back(record.split(DELIMITERS[delims::secondary]));
 
-    // seting up the tableWidget
+    /* COLUMNS */
+    int column_count = RECORDS_COLUMNS_NAMES.size();
+
+    ui->tableWidget->setColumnCount(column_count);
+    ui->tableWidget->setHorizontalHeaderLabels(RECORDS_COLUMNS_NAMES);
+
+    // hide id and id_list columns
+    ui->tableWidget->setColumnHidden(VIEW_RECORDS_IDLIST_INDEX, true);
+    ui->tableWidget->setColumnHidden(VIEW_RECORDS_ID_INDEX, true);
+
+    /* ROWS */
     if(recordsList.size() < 1)
         return;
 
     int row_count = recordsList.size();
-    int column_count = recordsList.at(0).size();
+    ui->tableWidget->setRowCount(row_count);
+
+    if(recordsList.size() == 1 && recordsList.at(0).at(0) == "")
+        return;
 
     // setting up the data
-    ui->tableWidget->setRowCount(row_count);
-    ui->tableWidget->setColumnCount(column_count);
     for(int row = 0; row < row_count; ++row)
         for(int col = 0; col < column_count; ++col)
             ui->tableWidget->setItem(row, col, new QTableWidgetItem(recordsList[row][col]));
 
-    ui->tableWidget->setHorizontalHeaderLabels(RECORDS_COLUMNS_NAMES);
-
-    // hide id column
-    ui->tableWidget->setColumnHidden(VIEW_RECORDS_ID_LIST_INDEX, true);
-
     // update line_sum
     update_line_sum();
+
+    ignore_tableWidget_cells_changing = false;
+}
+
+void Records::on_btn_add_clicked()
+{
+    ui->tableWidget->setRowCount(ui->tableWidget->rowCount() + 1);
+}
+
+void Records::on_btn_del_clicked()
+{
+    auto all_selected_IDs = ui->tableWidget->selectionModel()->selectedRows(VIEW_RECORDS_ID_INDEX);
+    if(all_selected_IDs.size() < 1)
+        return;
+
+    QString selected_ID = all_selected_IDs.at(0).data(Qt::DisplayRole).toString();
+
+    // DELETE FROM Records WHERE ID=selected_ID
+    QStringList requestList = {
+        SERVER_API[ServerAPI::records_delete],
+        DATABASE_TABLES[Tables::records],
+        "ID=" + selected_ID
+    };
+
+    emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
+
+    if(networkCommunication->getResponseWhenReady() != "1")
+        QMessageBox::critical(nullptr, "Помилка Records", "on_btn_del_clicked", QMessageBox::Ok);
+
+    on_btn_refresh_clicked();
+}
+
+void Records::on_tableWidget_itemChanged(QTableWidgetItem *item)
+{
+    if(!ignore_tableWidget_cells_changing)
+    {
+        int column = item->column();
+        if(column == VIEW_RECORDS_CODE_INDEX ||
+           column == VIEW_RECORDS_COUNT_INDEX ||
+           column == VIEW_RECORDS_PRICE_INDEX
+           )
+        {
+            switch (column) {
+                /* CODE COLUMN */
+                case VIEW_RECORDS_CODE_INDEX:
+                {
+                    QString ID_ProductType = find_ID_ProductType_by_Code(item->data(Qt::DisplayRole).toString());
+
+                    if(ID_ProductType != "")
+                    {
+                        edit_cell(item->row(), "ID_ProductType=" + ID_ProductType);
+                    }
+                    // IF THERE IS NO SUCH PRODUCT 'CREATE NEW?'
+                    else
+                    {
+                    /* ------------ TODO CREATING NEW ProductType ----------- */
+                    }
+                } break;
+
+                /* COUNT COLUMN */
+                case VIEW_RECORDS_COUNT_INDEX:
+                {
+                    edit_cell(item->row(), "Count=" + item->data(Qt::DisplayRole).toString());
+                } break;
+
+                /* PRICE COLUMN */
+                case VIEW_RECORDS_PRICE_INDEX:
+                {
+                    edit_cell(item->row(), "Price=" + item->data(Qt::DisplayRole).toString());
+                } break;
+
+            }
+
+            // update tableWidget and line_sum
+            on_btn_refresh_clicked();
+            update_line_sum();
+        }
+    }
 }
 
