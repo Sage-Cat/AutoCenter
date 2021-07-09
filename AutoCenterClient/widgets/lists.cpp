@@ -106,19 +106,29 @@ void Lists::on_btn_refresh_clicked()
     for(const auto &record : networkCommunication->getResponseWhenReady().split(DELIMITERS[delims::primary]))
         recordsList.push_back(record.split(DELIMITERS[delims::secondary]));
 
-    // seting up the tableWidget
+    /* COLUMNS */
+    int column_count = LISTS_COLUMNS_NAMES.size();
+
+    ui->tableWidget->setColumnCount(column_count);
+    ui->tableWidget->setHorizontalHeaderLabels(LISTS_COLUMNS_NAMES);
+
+    // hide id and id_list columns
+    ui->tableWidget->setColumnHidden(VIEW_LISTS_ID_INDEX, true);
+    ui->tableWidget->setColumnHidden(VIEW_LISTS_IPN_INDEX, true);
+
+    /* ROWS */
     if(recordsList.size() < 1)
         return;
 
-    int row_count = recordsList.size();
-    int column_count = recordsList.at(0).size();
+    if(recordsList.at(0).at(0) == "")
+        return;
 
     // setting up the data
+    int row_count = recordsList.size();
     ui->tableWidget->setRowCount(row_count);
-    ui->tableWidget->setColumnCount(column_count);
     for(int row = 0; row < row_count; ++row)
         for(int col = 0; col < column_count; ++col)
-            if(col == 2) // SPECIAL FOR ListType
+            if(col == VIEW_LISTS_LISTTYPE_INDEX) // SPECIAL FOR ListType
             {
                 qsizetype listType = recordsList[row][col].toUInt();
                 if(listType < LISTTYPE_NAMES.size())
@@ -126,11 +136,6 @@ void Lists::on_btn_refresh_clicked()
             }
             else
                 ui->tableWidget->setItem(row, col, new QTableWidgetItem(recordsList[row][col]));
-
-    ui->tableWidget->setHorizontalHeaderLabels(LISTS_COLUMNS_NAMES);
-
-    ui->tableWidget->setColumnHidden(VIEW_LISTS_ID_INDEX, true); // hide ID column
-    ui->tableWidget->setColumnHidden(VIEW_LISTS_IPN_INDEX, true); // hide IPN column
 }
 
 void Lists::on_radio_all_clicked()

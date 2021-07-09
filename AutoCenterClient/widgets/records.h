@@ -2,6 +2,8 @@
 #define RECORDS_H
 
 #include <QWidget>
+#include <QTableWidgetItem>
+#include <QVector>
 
 #include "networkcommunication.h"
 
@@ -26,17 +28,32 @@ private slots:
 
     void on_btn_refresh_clicked();
 
+    void on_btn_add_clicked();
+    void on_btn_del_clicked();
+    void on_tableWidget_itemChanged(QTableWidgetItem *item);
+
 private /* methods */:
     void init_graphical_widgets();
     void update_line_sum();
 
-    QStringList getAllCustomersNames();
-    QStringList getAllSellersNames();
+    //! example: row=5, data='Count=3'
+    void edit_cell(int row, QString data);
+
+    QString find_ID_ProductType_by_Code(QString code);
+
+    QStringList getAllCustomersNames_and_setIndexToID();
+    QStringList getAllSellersNames_and_setIndexToID();
 
 private:
     Ui::Records *ui;
     NetworkCommunication *networkCommunication;
     int ID_List;
+
+    //! test_indexToID[index] = ID
+    QVector<int> customers_indexToID, sellers_indexToID;
+
+    bool ignore_combobox_index_changing;
+    bool ignore_tableWidget_cells_changing;
 };
 
 #endif // RECORDS_H

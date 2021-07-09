@@ -100,20 +100,35 @@ enum Tables {
 //const QStringList SELLERS_COLUMNS_NAMES{"Ім'я", "IBAN", "Банк", "ЄДРПОУ", "ІПН", "Адреса", "ID"};
 
 //! Lists
-const QStringList LISTS_COLUMNS_NAMES{"Коли", "Номер документа", "Вид", "Продавець", "Покупець"};
+const QStringList LISTS_COLUMNS_NAMES{"Коли", "Номер документа", "Вид", "Продавець", "Покупець", "ID", "IPN"};
 // table
 const int TABLE_LISTS_DATETIME_INDEX = 1;
 const int TABLE_LISTS_SELLER_INDEX = 4;
 const int TABLE_LISTS_CUSTOMER_INDEX = 5;
 // view
+const int VIEW_LISTS_LISTTYPE_INDEX = 2;
 const int VIEW_LISTS_ID_INDEX = 5;
 const int VIEW_LISTS_IPN_INDEX = 6;
 
 //! Records
-const QStringList RECORDS_COLUMNS_NAMES{"Код", "Каталожний номер", "Код ТНВЕД", "Назва", "Одиниці", "Кількість", "Ціна"};
+const QStringList RECORDS_COLUMNS_NAMES{"Код", "Каталожний номер", "Код ТНВЕД", "Назва", "Одиниці", "Кількість", "Ціна", "ID_List", "ID"};
 // view
+const int VIEW_RECORDS_CODE_INDEX = 0;
+const int VIEW_RECORDS_COUNT_INDEX = 5;
 const int VIEW_RECORDS_PRICE_INDEX = 6;
-const int VIEW_RECORDS_ID_LIST_INDEX = 7;
+const int VIEW_RECORDS_IDLIST_INDEX = 7;
+const int VIEW_RECORDS_ID_INDEX = 8;
+
+//! Customers
+const int TABLE_CUSTOMERS_NAMES_INDEX = 0;
+const int TABLE_CUSTOMERS_ID_INDEX = 8;
+
+//! Sellers
+const int TABLE_SELLERS_NAMES_INDEX = 0;
+const int TABLE_SELLERS_ID_INDEX = 6;
+
+//! ProductTypes
+const int TABLE_PRODUCTTYPES_ID_INDEX = 1;
 
 //// Inventory
 //const QStringList INVENTORY_COLUMNS_NAMES{"Кількість", "", "Код",  "Каталожний номер", "Код ТНВЕД", "Назва", "Одиниці", ""};
