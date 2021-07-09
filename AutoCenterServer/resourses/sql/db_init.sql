@@ -32,30 +32,25 @@ CREATE TABLE IF NOT EXISTS Lists (
 );
 
 
-
-|Table: ProductTypes|
-CREATE TABLE IF NOT EXISTS ProductTypes (
-    Amount         INTEGER,
-    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    Code           TEXT    UNIQUE ON CONFLICT REPLACE,
-    Catalog        TEXT,
-    TNVED          TEXT,
-    Name_Product   TEXT,
-    Unit           TEXT,
-    Price          DOUBLE
+|Table: Products|
+CREATE TABLE IF NOT EXISTS Products (
+    ID           INTEGER PRIMARY KEY AUTOINCREMENT,
+    Code         TEXT    UNIQUE ON CONFLICT REPLACE,
+    Catalog      TEXT,
+    TNVED        TEXT,
+    Name_Product TEXT,
+    Unit         TEXT
 );
 
 
 |Table: Records|
 CREATE TABLE IF NOT EXISTS Records (
-    ID             INTEGER PRIMARY KEY AUTOINCREMENT,
-    Count          INTEGER,
-    Price          DOUBLE,
-    ID_ProductType INTEGER REFERENCES ProductTypes (ID) ON DELETE CASCADE,
-    ID_List        INTEGER REFERENCES Lists (ID)
+    ID         INTEGER PRIMARY KEY AUTOINCREMENT,
+    Count      INTEGER,
+    Price      DOUBLE,
+    ID_Product INTEGER REFERENCES Products (ID) ON DELETE CASCADE,
+    ID_List    INTEGER REFERENCES Lists (ID)
 );
-
-
 
 
 |Table: Sellers|
@@ -66,7 +61,7 @@ CREATE TABLE IF NOT EXISTS Sellers (
     EDRPOY      TEXT,
     IPN         TEXT,
     Address     TEXT,
-    ID   INTEGER PRIMARY KEY AUTOINCREMENT
+    ID          INTEGER PRIMARY KEY AUTOINCREMENT
 );
 
 
@@ -137,22 +132,22 @@ CREATE VIEW IF NOT EXISTS Lists_view AS
            LEFT JOIN
            Customers ON Lists.ID_Customer = Customers.ID;
 
+
 |View: Records_view|
 CREATE VIEW IF NOT EXISTS Records_view AS
-    SELECT ProductTypes.Code,
-           ProductTypes.Catalog,
-           ProductTypes.TNVED,
-           ProductTypes.Name_Product,
-           ProductTypes.Unit,
+    SELECT Products.Code,
+           Products.Catalog,
+           Products.TNVED,
+           Products.Name_Product,
+           Products.Unit,
            Records.Count,
            Records.Price,
            Records.ID_List,
            Records.ID,
-           ProductTypes.ID,
-           ProductTypes.Storage
+           Products.ID
       FROM Records
            LEFT JOIN
-           ProductTypes ON Records.ID_ProductType = ProductTypes.ID;
+           Products ON Records.ID_Product = Products.ID;
 
 |View: Max_ListNumber|
 CREATE VIEW IF NOT EXISTS Max_ListNumber AS
@@ -160,9 +155,3 @@ CREATE VIEW IF NOT EXISTS Max_ListNumber AS
            ListType
       FROM Lists
      GROUP BY ListType;
-
-
-
-
-
-

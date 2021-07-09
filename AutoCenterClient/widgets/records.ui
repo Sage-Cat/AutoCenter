@@ -318,7 +318,7 @@ margin-right: 5px;</string>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_10">
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
      <item>
       <spacer name="horizontalSpacer_3">
        <property name="orientation">
@@ -333,7 +333,7 @@ margin-right: 5px;</string>
       </spacer>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_8">
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
         <widget class="QLabel" name="label_7">
          <property name="enabled">
@@ -353,28 +353,23 @@ margin-right: 5px;</string>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="line_sum">
+        <widget class="QLabel" name="line_sum">
          <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>40</width>
-           <height>0</height>
-          </size>
+          <bool>true</bool>
          </property>
          <property name="font">
           <font>
-           <family>Calibri</family>
-           <pointsize>12</pointsize>
-           <underline>false</underline>
+           <family>Cantarell</family>
+           <pointsize>14</pointsize>
           </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color : white; 
+margin-left: 5px; 
+margin-right: 5px;</string>
+         </property>
+         <property name="text">
+          <string>дата</string>
          </property>
         </widget>
        </item>

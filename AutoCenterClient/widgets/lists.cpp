@@ -38,7 +38,7 @@ void Lists::on_btn_add_clicked()
     }
 
     // open records tab
-    emit tabRecordsRequested(response.toInt());
+    emit tabRecordsRequested(response.toInt(), type);
 
     // refresh
     on_btn_refresh_clicked();
@@ -167,6 +167,6 @@ void Lists::on_tableWidget_cellDoubleClicked(int row, int column)
     int ID_List = ui->tableWidget->item(row, VIEW_LISTS_ID_INDEX)->data(Qt::DisplayRole).toInt();
 
     // open records tab
-    emit tabRecordsRequested(ID_List);
+    emit tabRecordsRequested(ID_List, type);
 }
 

@@ -21,7 +21,7 @@ public:
     ~Lists();
 
 signals:
-    void tabRecordsRequested(int ID_List);
+    void tabRecordsRequested(int ID_List, OperationType type);
 
 private slots:
     void on_btn_add_clicked();

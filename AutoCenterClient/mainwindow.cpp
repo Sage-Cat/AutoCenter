@@ -54,9 +54,9 @@ void MainWindow::openTabLists(OperationType type)
     connect(tab, &Lists::tabRecordsRequested, this, &MainWindow::openTabRecords);
 }
 
-void MainWindow::openTabRecords(int ID_List)
+void MainWindow::openTabRecords(int ID_List, OperationType type)
 {
-    Records *tab = new Records(this, networkCommunication, ID_List);
+    Records *tab = new Records(this, networkCommunication, ID_List, type);
     ui->tabWidget->addTab(tab, QIcon(":/icons/sale.png"), "Редагування списку");
     ui->tabWidget->setCurrentWidget(tab);
 }

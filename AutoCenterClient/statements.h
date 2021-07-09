@@ -64,7 +64,7 @@ const QStringList DATABASE_TABLES{
     "Cars",
     "Customers",
     "Lists",
-    "ProductTypes",
+    "Products",
     "Records",
     "Sellers",
     "UserLogs",
@@ -82,7 +82,7 @@ enum Tables {
     cars = 0,
     customers,
     lists,
-    product_types,
+    products,
     records,
     sellers,
     user_logs,
@@ -121,7 +121,7 @@ const QStringList RECORDS_COLUMNS_NAMES{
     "Код",             "Каталожний номер",     "Код ТНВЕД",
     "Назва",           "Одиниці",              "Кількість",
     "Ціна",            "ID_List",              "ID",
-    "ID_ProductType",  "Storage"
+    "ID_Product"
 };
 // view
 const int VIEW_RECORDS_CODE_INDEX = 0;
@@ -129,8 +129,7 @@ const int VIEW_RECORDS_COUNT_INDEX = 5;
 const int VIEW_RECORDS_PRICE_INDEX = 6;
 const int VIEW_RECORDS_IDLIST_INDEX = 7;
 const int VIEW_RECORDS_ID_INDEX = 8;
-const int VIEW_RECORDS_IDPRODUCTTYPE_INDEX = 9;
-const int VIEW_RECORDS_STORAGE_INDEX = 10;
+const int VIEW_RECORDS_IDPRODUCT_INDEX = 9;
 
 //! Customers
 const int TABLE_CUSTOMERS_NAMES_INDEX = 0;
@@ -141,7 +140,7 @@ const int TABLE_SELLERS_NAMES_INDEX = 0;
 const int TABLE_SELLERS_ID_INDEX = 6;
 
 //! ProductTypes
-const int TABLE_PRODUCTTYPES_ID_INDEX = 1;
+const int TABLE_PRODUCTS_ID_INDEX = 0;
 
 //// Inventory
 //const QStringList INVENTORY_COLUMNS_NAMES{"Кількість", "", "Код",  "Каталожний номер", "Код ТНВЕД", "Назва", "Одиниці", ""};
