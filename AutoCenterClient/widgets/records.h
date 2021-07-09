@@ -32,6 +32,14 @@ private slots:
     void on_btn_del_clicked();
     void on_tableWidget_itemChanged(QTableWidgetItem *item);
 
+    void changeListType(int type_index);
+    int getNextNumberforListType(int type_index);
+    void changeListNumber(int number);
+
+    void on_btn_print_barcode_clicked();
+
+    void on_btn_print_document_clicked();
+
 private /* methods */:
     void init_graphical_widgets();
     void update_line_sum();

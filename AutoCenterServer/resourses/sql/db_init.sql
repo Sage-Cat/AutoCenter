@@ -147,10 +147,20 @@ CREATE VIEW IF NOT EXISTS Records_view AS
            Records.Count,
            Records.Price,
            Records.ID_List,
-           Records.ID
+           Records.ID,
+           ProductTypes.ID,
+           ProductTypes.Storage
       FROM Records
            LEFT JOIN
            ProductTypes ON Records.ID_ProductType = ProductTypes.ID;
+
+|View: Max_ListNumber|
+CREATE VIEW IF NOT EXISTS Max_ListNumber AS
+    SELECT MAX(ListNumber),
+           ListType
+      FROM Lists
+     GROUP BY ListType;
+
 
 
 

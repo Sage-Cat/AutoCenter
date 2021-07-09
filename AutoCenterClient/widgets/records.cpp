@@ -3,6 +3,8 @@
 
 #include <QVector>
 
+#include "dialogs/changelisttype.h"
+
 Records::Records(QWidget *parent, NetworkCommunication *networkCommunication, int ID_List) :
     QWidget(parent),
     ui(new Ui::Records),
@@ -122,7 +124,7 @@ void Records::edit_cell(int row, QString data)
     emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
 
     if(networkCommunication->getResponseWhenReady() != "1")
-        QMessageBox::critical(nullptr, "Помилка Records", "on_tableWidget_itemChanged Count", QMessageBox::Ok);
+        QMessageBox::critical(nullptr, "Помилка Records", "edit_cell - " + data, QMessageBox::Ok);
 }
 
 QString Records::find_ID_ProductType_by_Code(QString code)
@@ -210,9 +212,11 @@ void Records::on_btn_refresh_clicked()
     ui->tableWidget->setColumnCount(column_count);
     ui->tableWidget->setHorizontalHeaderLabels(RECORDS_COLUMNS_NAMES);
 
-    // hide id and id_list columns
+    // hide special columns
     ui->tableWidget->setColumnHidden(VIEW_RECORDS_IDLIST_INDEX, true);
     ui->tableWidget->setColumnHidden(VIEW_RECORDS_ID_INDEX, true);
+    ui->tableWidget->setColumnHidden(VIEW_RECORDS_IDPRODUCTTYPE_INDEX, true);
+    ui->tableWidget->setColumnHidden(VIEW_RECORDS_STORAGE_INDEX, true);
 
     /* ROWS */
     if(recordsList.size() < 1)
@@ -268,6 +272,8 @@ void Records::on_tableWidget_itemChanged(QTableWidgetItem *item)
     if(!ignore_tableWidget_cells_changing)
     {
         int column = item->column();
+        QString data = item->data(Qt::DisplayRole).toString();
+
         if(column == VIEW_RECORDS_CODE_INDEX ||
            column == VIEW_RECORDS_COUNT_INDEX ||
            column == VIEW_RECORDS_PRICE_INDEX
@@ -277,13 +283,13 @@ void Records::on_tableWidget_itemChanged(QTableWidgetItem *item)
                 /* CODE COLUMN */
                 case VIEW_RECORDS_CODE_INDEX:
                 {
-                    QString ID_ProductType = find_ID_ProductType_by_Code(item->data(Qt::DisplayRole).toString());
+                    QString ID_ProductType = find_ID_ProductType_by_Code(data);
 
                     if(ID_ProductType != "")
                     {
                         edit_cell(item->row(), "ID_ProductType=" + ID_ProductType);
                     }
-                    // IF THERE IS NO SUCH PRODUCT 'CREATE NEW?'
+                    // IF THERE IS NO SUCH PRODUCT THEN 'CREATE NEW?'
                     else
                     {
                     /* ------------ TODO CREATING NEW ProductType ----------- */
@@ -293,13 +299,13 @@ void Records::on_tableWidget_itemChanged(QTableWidgetItem *item)
                 /* COUNT COLUMN */
                 case VIEW_RECORDS_COUNT_INDEX:
                 {
-                    edit_cell(item->row(), "Count=" + item->data(Qt::DisplayRole).toString());
+                    edit_cell(item->row(), "Count=" + data);
                 } break;
 
                 /* PRICE COLUMN */
                 case VIEW_RECORDS_PRICE_INDEX:
                 {
-                    edit_cell(item->row(), "Price=" + item->data(Qt::DisplayRole).toString());
+                    edit_cell(item->row(), "Price=" + data);
                 } break;
 
             }
@@ -308,6 +314,76 @@ void Records::on_tableWidget_itemChanged(QTableWidgetItem *item)
             on_btn_refresh_clicked();
             update_line_sum();
         }
+    }
+}
+
+void Records::changeListType(int type_index)
+{
+    QStringList requestList = {
+        SERVER_API[ServerAPI::records_edit],
+        DATABASE_TABLES[Tables::lists],
+        "ID=" + QString::number(ID_List),
+        "ListType=" + QString::number(type_index)
+    };
+
+    emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
+
+    if(networkCommunication->getResponseWhenReady() != "1")
+        QMessageBox::critical(nullptr, "Помилка Records", "changeListType", QMessageBox::Ok);
+
+    // SETTING new ListNumber
+    changeListNumber(getNextNumberforListType(type_index));
+}
+
+int Records::getNextNumberforListType(int type_index)
+{
+    // SELECT * FROM Max_ListNumber
+    QStringList requestList = {
+        SERVER_API[ServerAPI::records_get],
+        DATABASE_TABLES[Tables::max_listnumber],
+        "ListType=" + QString::number(type_index)
+    };
+
+    emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
+
+    QString response = networkCommunication->getResponseWhenReady();
+
+    if(response == "")
+        QMessageBox::critical(nullptr, "Помилка Records", "changeListNumber", QMessageBox::Ok);
+
+    QString number = response.split(DELIMITERS[delims::primary]).at(0);
+
+    return number.toInt() + 1;
+}
+
+void Records::changeListNumber(int number)
+{
+    QStringList requestList = {
+        SERVER_API[ServerAPI::records_edit],
+        DATABASE_TABLES[Tables::lists],
+        "ID=" + QString::number(ID_List),
+        "ListNumber=" + QString::number(number)
+    };
+
+    emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
+
+    if(networkCommunication->getResponseWhenReady() != "1")
+        QMessageBox::critical(nullptr, "Помилка Records", "changeListNumber", QMessageBox::Ok);
+}
+
+void Records::on_btn_print_barcode_clicked()
+{
+
+}
+
+void Records::on_btn_print_document_clicked()
+{
+    ChangeListType *dlg = new ChangeListType;
+    connect(dlg, &ChangeListType::typeSelected, this, &Records::changeListType);
+
+    if(dlg->exec() == QDialog::Accepted)
+    {
+        // TODO PRINT DOCUMENT
     }
 }
 
