@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/add.png</file>
+        <file>icons/delete.png</file>
+        <file>icons/logo.png</file>
+        <file>icons/page.png</file>
+        <file>icons/refresh.png</file>
+        <file>icons/sale.png</file>
+        <file>icons/work.png</file>
+        <file>icons/open_file.png</file>
+        <file>icons/info.png</file>
+        <file>icons/crown.png</file>
+    </qresource>
+</RCC>
