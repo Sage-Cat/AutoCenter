@@ -13,6 +13,8 @@
 //! M - number of columns
 typedef std::vector<QStringList> RecordsList;
 
+const int ERROR_CODE = -1;
+
 enum OperationType {
     sale = 0,
     receipt

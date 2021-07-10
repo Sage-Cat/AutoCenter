@@ -121,7 +121,10 @@ void Lists::on_btn_refresh_clicked()
         return;
 
     if(recordsList.at(0).at(0) == "")
+    {
+        ui->tableWidget->setRowCount(0);
         return;
+    }
 
     // setting up the data
     int row_count = recordsList.size();

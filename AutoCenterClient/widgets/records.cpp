@@ -139,8 +139,7 @@ void Records::on_btn_refresh_clicked()
 
     if(recordsList.size() == 1 && recordsList.at(0).at(0) == "")
     {
-        for(int col = 0; col < column_count; ++col)
-            ui->tableWidget->setItem(0, col, new QTableWidgetItem(""));
+        ui->tableWidget->setRowCount(0);
         return;
     }
 
@@ -219,9 +218,17 @@ QStringList Records::getAllCustomersNames_and_setIndexToID()
     QStringList listOf_Customers_Names;
     for(const auto &record : networkCommunication->getResponseWhenReady().split(DELIMITERS[delims::primary]))
     {
-        QStringList row = record.split(DELIMITERS[delims::secondary]);
-        listOf_Customers_Names << row.at(TABLE_CUSTOMERS_NAMES_INDEX);
-        customers_indexToID.push_back(row.at(TABLE_CUSTOMERS_ID_INDEX).toInt());
+        if(record != "")
+        {
+            QStringList row = record.split(DELIMITERS[delims::secondary]);
+            listOf_Customers_Names << row.at(TABLE_CUSTOMERS_NAMES_INDEX);
+            customers_indexToID.push_back(row.at(TABLE_CUSTOMERS_ID_INDEX).toInt());
+        }
+        else
+        {
+            listOf_Customers_Names << "";
+            customers_indexToID.push_back(ERROR_CODE);
+        }
     }
 
     return listOf_Customers_Names;
@@ -242,9 +249,17 @@ QStringList Records::getAllSellersNames_and_setIndexToID()
     QStringList listOf_Sellers_Names;
     for(const auto &record : networkCommunication->getResponseWhenReady().split(DELIMITERS[delims::primary]))
     {
-        QStringList row = record.split(DELIMITERS[delims::secondary]);
-        listOf_Sellers_Names << row.at(TABLE_SELLERS_NAMES_INDEX);
-        sellers_indexToID.push_back(row.at(TABLE_SELLERS_ID_INDEX).toInt());
+        if(record != "")
+        {
+            QStringList row = record.split(DELIMITERS[delims::secondary]);
+            listOf_Sellers_Names << row.at(TABLE_SELLERS_NAMES_INDEX);
+            sellers_indexToID.push_back(row.at(TABLE_SELLERS_ID_INDEX).toInt());
+        }
+        else
+        {
+            listOf_Sellers_Names << "";
+            sellers_indexToID.push_back(ERROR_CODE);
+        }
     }
 
     return listOf_Sellers_Names;
@@ -384,7 +399,9 @@ void Records::handleChangingForNonExistingRow(int row, int column, QString data)
         // IF THERE IS NO SUCH PRODUCT THEN 'CREATE NEW?'
         else
         {
-        /* ------------ TODO CREATING NEW ProductType ----------- */
+            QMessageBox::information(this, "Створення", "Створити новий вид товару?", QMessageBox::Yes | QMessageBox::No);
+
+            /* ------------ TODO CREATING NEW ProductType ----------- */
         }
 
         // updating table
