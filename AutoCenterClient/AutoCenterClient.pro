@@ -16,6 +16,7 @@ SOURCES += \
     tcpclient.cpp \
     widgets/info.cpp \
     widgets/lists.cpp \
+    widgets/persons.cpp \
     widgets/records.cpp
 
 
@@ -27,6 +28,7 @@ HEADERS += \
     tcpclient.h \
     widgets/info.h \
     widgets/lists.h \
+    widgets/persons.h \
     widgets/records.h
 
 
@@ -35,6 +37,7 @@ FORMS += \
     mainwindow.ui \
     widgets/info.ui \
     widgets/lists.ui \
+    widgets/persons.ui \
     widgets/records.ui
 
 

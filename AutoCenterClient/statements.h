@@ -98,8 +98,7 @@ enum Tables {
     /* Views */
     view_lists,
     view_records,
-    view_user,
-    view_user_cars,
+    view_customer_cars,
 
     info_customer,
     info_user,
@@ -121,8 +120,7 @@ const QMap<Tables, QString> DATABASE_TABLES = {
      /* Views */
     {Tables::view_lists, "view_Lists"},
     {Tables::view_records, "view_Records"},
-    {Tables::view_user, "view_User"},
-    {Tables::view_user_cars, "view_UserCars"},
+    {Tables::view_customer_cars, "view_CustomerCars"},
     {Tables::info_customer, "info_Customer"},
     {Tables::info_user, "info_User"},
     {Tables::max_list_number, "max_ListNumber"},
@@ -135,6 +133,29 @@ const QMap<Tables, QString> DATABASE_TABLES = {
 
 
 const QMap<Tables, QStringList> COLUMN_NAMES = {
+    {
+        Tables::sellers,
+        {
+            "Ім'я", "IBAN", "Банк",
+            "ЄДРПОУ", "ІПН", "Адреса",
+            "ID"
+        }
+    },
+    {
+        Tables::customers,
+        {
+            "Ім'я", "IBAN", "Банк",
+            "ЄДРПОУ", "ІПН", "Адреса",
+            "Телефон", "Ел. пошта", "ID"
+        }
+    },
+    {
+        Tables::users,
+        {
+            "Ім'я", "Телефон", "Ел. пошта",
+            "ІПН", "Пароль", "ID"
+        }
+    },
     {
         Tables::info_customer,
         {
@@ -169,10 +190,11 @@ const QMap<Tables, QStringList> COLUMN_NAMES = {
 };
 
 const QMap<Tables, int> COLUMN_ID_INDEX = {
-    {Tables::info_customer, 8},
-    {Tables::info_user, 2},
-    {Tables::customers, 8},
-    {Tables::sellers, 6},
+    {Tables::info_customer, 0},
+    {Tables::info_user, 0},
+    {Tables::customers, 0},
+    {Tables::sellers, 0},
+    {Tables::users, 0},
     {Tables::products, 0},
 
     /* VIEWS */
