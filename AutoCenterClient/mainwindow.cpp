@@ -5,6 +5,7 @@
 
 #include "widgets/lists.h"
 #include "widgets/records.h"
+#include "widgets/info.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -59,6 +60,11 @@ void MainWindow::openTabRecords(int ID_List, OperationType type)
     Records *tab = new Records(this, networkCommunication, ID_List, type);
     ui->tabWidget->addTab(tab, QIcon(":/icons/sale.png"), "Редагування списку");
     ui->tabWidget->setCurrentWidget(tab);
+}
+
+void MainWindow::openTabInfo(Tables table, int ID)
+{
+
 }
 
 void MainWindow::on_act_allSales_triggered()

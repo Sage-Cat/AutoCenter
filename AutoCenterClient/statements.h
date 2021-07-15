@@ -7,6 +7,7 @@
 #include <QHostAddress>
 #include <QMessageBox>
 #include <QDebug>
+#include <QMap>
 
 //! List[N][M], where
 //! N - number of rows,
@@ -19,14 +20,31 @@ enum OperationType {
     sale = 0,
     receipt
 };
-const QStringList LISTTYPE_NAMES = {
-    ""
-    "Рахунок",
-    "Видаткова накладна",
-    "Товарний чек",
-    "Податкова накладна",
-    "Накладна на повернення",
-    "Накладна на надходження"
+
+enum ListTypes {
+    // SALE
+    default_list = 0,
+    invoice,
+    sales_invoice,
+    sales_receipt,
+    tax_invoice,
+    return_invoice,
+
+    // RECEIPT
+    receipt_invoice
+};
+
+const QMap<ListTypes, QString> LIST_TYPES = {
+    // SALE
+    {ListTypes::default_list, ""},
+    {ListTypes::invoice, "Рахунок"},
+    {ListTypes::sales_invoice, "Видаткова накладна"},
+    {ListTypes::sales_receipt, "Товарний чек"},
+    {ListTypes::tax_invoice, "Податкова накладна"},
+    {ListTypes::return_invoice, "Накладна на повернення"},
+
+    // RECEIPT
+    {ListTypes::receipt_invoice, "Накладна на надходження"}
 };
 
 // TCP Connection
@@ -35,51 +53,38 @@ const int DEFAULT_PORT = 9999;
 const int DEFAULT_TIMEOUT_MS = 5000;
 
 //! All delimiters for transfering data (decode messages using it in direct 0,1... order)
-const QStringList DELIMITERS{":::", "|||"};
-enum delims {
+enum Delimiters {
     primary = 0,
     secondary
 };
 
-//! All types of requests that could be handled by the server
-const QStringList SERVER_API{
-    "add",
-    "del",
-    "edit",
-    "get",
-    "login",
-    "statistics",
-    "pricelist"
+const QMap<Delimiters, QString> DELIMITERS = {
+    {Delimiters::primary, ":::"},
+    {Delimiters::secondary, "|||"}
 };
-enum ServerAPI {
-    records_add = 0,
-    records_delete,
-    records_edit,
-    records_get,
+
+//! All types of requests that could be handled by the server
+enum Api {
+    _add = 0,
+    _del,
+    _edit,
+    _get,
     login,
     stat,
     pricelist
 };
 
-//! All database tables
-const QStringList DATABASE_TABLES{
-    "Cars",
-    "Customers",
-    "Lists",
-    "Products",
-    "Records",
-    "Sellers",
-    "UserLogs",
-    "Users",
-
-     /* Views */
-    "Customer_info",
-    "Lists_view",
-    "Statistics",
-    "UsersAndCars",
-    "Records_view",
-    "Max_ListNumber"
+const QMap<Api, QString> SERVER_API = {
+    {Api::_add, "add"},
+    {Api::_del, "del"},
+    {Api::_edit, "edit"},
+    {Api::_get, "get"},
+    {Api::login, "login"},
+    {Api::stat, "statistics"},
+    {Api::pricelist, "pricelist"}
 };
+
+//! All database tables & views
 enum Tables {
     cars = 0,
     customers,
@@ -91,58 +96,112 @@ enum Tables {
     users,
 
     /* Views */
-    customers_info,
-    lists_view,
+    view_lists,
+    view_records,
+    view_user,
+    view_user_cars,
+
+    info_customer,
+    info_user,
+    max_list_number,
     statistics,
-    users_and_cars,
-    records_view,
-    max_listnumber
+
+};
+
+const QMap<Tables, QString> DATABASE_TABLES = {
+    {Tables::cars, "Cars"},
+    {Tables::customers, "Customers"},
+    {Tables::lists, "Lists"},
+    {Tables::products, "Products"},
+    {Tables::records, "Records"},
+    {Tables::sellers, "Sellers"},
+    {Tables::user_logs, "UserLogs"},
+    {Tables::users, "Users"},
+
+     /* Views */
+    {Tables::view_lists, "view_Lists"},
+    {Tables::view_records, "view_Records"},
+    {Tables::view_user, "view_User"},
+    {Tables::view_user_cars, "view_UserCars"},
+    {Tables::info_customer, "info_Customer"},
+    {Tables::info_user, "info_User"},
+    {Tables::max_list_number, "max_ListNumber"},
+    {Tables::statistics, "Statistics"}
 };
 
 //// Customers & Sellers
 //const QStringList CUSTOMERS_COLUMNS_NAMES{"Ім'я", "IBAN", "Банк", "ЄДРПОУ", "ІПН", "Адреса", "Телефон", "Ел. пошта", "ID"};
 //const QStringList SELLERS_COLUMNS_NAMES{"Ім'я", "IBAN", "Банк", "ЄДРПОУ", "ІПН", "Адреса", "ID"};
 
-//! Lists
-const QStringList LISTS_COLUMNS_NAMES{
-    "Коли",         "Номер документа",  "Вид",
-    "Продавець",    "Покупець",         "ID",
-    "IPN"
+
+const QMap<Tables, QStringList> COLUMN_NAMES = {
+    {
+        Tables::info_customer,
+        {
+            "Коли", "Код", "Каталог",
+            "ТНВЕД", "Назва", "Одиниці",
+            "К-сть", "Ціна", "ID"
+        }
+    },
+    {
+        Tables::info_user,
+        {
+            "Коли", "Що зробив(ла)", "ID"
+        }
+    },
+    {
+        Tables::view_lists,
+        {
+            "Коли",         "Номер документа",  "Вид",
+            "Продавець",    "Покупець",         "ID",
+            "IPN"
+        }
+    },
+    {
+        Tables::view_records,
+        {
+            "Код",             "Каталожний номер",     "Код ТНВЕД",
+            "Назва",           "Одиниці",              "Кількість",
+            "Ціна",            "ID_List",              "ID",
+            "ID_Product"
+        }
+    }
 };
+
+const QMap<Tables, int> COLUMN_ID_INDEX = {
+    {Tables::info_customer, 8},
+    {Tables::info_user, 2},
+    {Tables::customers, 8},
+    {Tables::sellers, 6},
+    {Tables::products, 0},
+
+    /* VIEWS */
+    {Tables::view_lists, 5},
+    {Tables::view_records, 8}
+};
+
+//! Lists
 // table
 const int TABLE_LISTS_DATETIME_INDEX = 1;
 const int TABLE_LISTS_SELLER_INDEX = 4;
 const int TABLE_LISTS_CUSTOMER_INDEX = 5;
 // view
 const int VIEW_LISTS_LISTTYPE_INDEX = 2;
-const int VIEW_LISTS_ID_INDEX = 5;
 const int VIEW_LISTS_IPN_INDEX = 6;
 
 //! Records
-const QStringList RECORDS_COLUMNS_NAMES{
-    "Код",             "Каталожний номер",     "Код ТНВЕД",
-    "Назва",           "Одиниці",              "Кількість",
-    "Ціна",            "ID_List",              "ID",
-    "ID_Product"
-};
 // view
-const int VIEW_RECORDS_CODE_INDEX = 0;
-const int VIEW_RECORDS_COUNT_INDEX = 5;
-const int VIEW_RECORDS_PRICE_INDEX = 6;
-const int VIEW_RECORDS_IDLIST_INDEX = 7;
-const int VIEW_RECORDS_ID_INDEX = 8;
-const int VIEW_RECORDS_IDPRODUCT_INDEX = 9;
+const int VIEW__CODE_INDEX = 0;
+const int VIEW__COUNT_INDEX = 5;
+const int VIEW__PRICE_INDEX = 6;
+const int VIEW__IDLIST_INDEX = 7;
+const int VIEW__IDPRODUCT_INDEX = 9;
 
 //! Customers
 const int TABLE_CUSTOMERS_NAMES_INDEX = 0;
-const int TABLE_CUSTOMERS_ID_INDEX = 8;
 
 //! Sellers
 const int TABLE_SELLERS_NAMES_INDEX = 0;
-const int TABLE_SELLERS_ID_INDEX = 6;
-
-//! ProductTypes
-const int TABLE_PRODUCTS_ID_INDEX = 0;
 
 //// Inventory
 //const QStringList INVENTORY_COLUMNS_NAMES{"Кількість", "", "Код",  "Каталожний номер", "Код ТНВЕД", "Назва", "Одиниці", ""};

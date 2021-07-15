@@ -1,5 +1,5 @@
-#ifndef RECORDS_H
-#define RECORDS_H
+#ifndef _H
+#define _H
 
 #include <QWidget>
 #include <QTableWidgetItem>
@@ -78,4 +78,4 @@ private:
     bool ignore_tableWidget_cells_changing;
 };
 
-#endif // RECORDS_H
+#endif // _H

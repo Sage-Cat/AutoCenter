@@ -4,9 +4,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++14
 
-# You can make your code fail to compile if it uses deprecated APIs.
+# You can make your code fail to compile if it uses deprecated Apis.
 # In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the Apis deprecated before Qt 6.0.0
 
 SOURCES += \
     dialogs/changelisttype.cpp \
@@ -14,6 +14,7 @@ SOURCES += \
     mainwindow.cpp \
     networkcommunication.cpp \
     tcpclient.cpp \
+    widgets/info.cpp \
     widgets/lists.cpp \
     widgets/records.cpp
 
@@ -24,6 +25,7 @@ HEADERS += \
     networkcommunication.h \
     statements.h \
     tcpclient.h \
+    widgets/info.h \
     widgets/lists.h \
     widgets/records.h
 
@@ -31,6 +33,7 @@ HEADERS += \
 FORMS += \
     dialogs/changelisttype.ui \
     mainwindow.ui \
+    widgets/info.ui \
     widgets/lists.ui \
     widgets/records.ui
 

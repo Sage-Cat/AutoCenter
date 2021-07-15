@@ -25,6 +25,7 @@ public slots:
 
     void openTabLists(OperationType type);
     void openTabRecords(int ID_List, OperationType type);
+    void openTabInfo(Tables table, int ID);
 
     void on_act_allSales_triggered();
     void on_act_allReceipts_triggered();

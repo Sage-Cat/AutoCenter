@@ -7,7 +7,11 @@ ChangeListType::ChangeListType(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->comboBox->addItems(LISTTYPE_NAMES);
+    QStringList listOfTypes;
+    for(const auto &value : LIST_TYPES.values())
+        listOfTypes << value;
+
+    ui->comboBox->addItems(listOfTypes);
 }
 
 ChangeListType::~ChangeListType()
