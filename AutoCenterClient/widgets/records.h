@@ -64,6 +64,12 @@ private /* methods */:
     QString find_IDProduct_by_Code(QString code);
     int getNextNumberforListType(int type_index);
 
+    //! returns new ID_Product
+    QString createNewProduct();
+
+    //! adds to DB new record
+    bool addNewRecordToDB(QString ID_Product);
+
 private:
     Ui::Records *ui;
     NetworkCommunication *networkCommunication;

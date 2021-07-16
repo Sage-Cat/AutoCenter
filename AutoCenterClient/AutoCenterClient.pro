@@ -10,6 +10,7 @@ CONFIG += c++14
 
 SOURCES += \
     dialogs/addperson.cpp \
+    dialogs/addproduct.cpp \
     dialogs/changelisttype.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
 
 HEADERS += \
     dialogs/addperson.h \
+    dialogs/addproduct.h \
     dialogs/changelisttype.h \
     mainwindow.h \
     networkcommunication.h \
@@ -36,6 +38,7 @@ HEADERS += \
 
 FORMS += \
     dialogs/addperson.ui \
+    dialogs/addproduct.ui \
     dialogs/changelisttype.ui \
     mainwindow.ui \
     widgets/info.ui \

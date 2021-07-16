@@ -217,11 +217,11 @@ const int VIEW_LISTS_IPN_INDEX = 6;
 
 //! Records
 // view
-const int VIEW__CODE_INDEX = 0;
-const int VIEW__COUNT_INDEX = 5;
-const int VIEW__PRICE_INDEX = 6;
-const int VIEW__IDLIST_INDEX = 7;
-const int VIEW__IDPRODUCT_INDEX = 9;
+const int VIEW_CODE_INDEX = 0;
+const int VIEW_COUNT_INDEX = 5;
+const int VIEW_PRICE_INDEX = 6;
+const int VIEW_IDLIST_INDEX = 7;
+const int VIEW_IDPRODUCT_INDEX = 9;
 
 //! Customers
 const int TABLE_CUSTOMERS_NAMES_INDEX = 0;

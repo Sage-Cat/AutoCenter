@@ -4,6 +4,7 @@
 #include <QVector>
 
 #include "dialogs/changelisttype.h"
+#include "dialogs/addproduct.h"
 
 Records::Records(QWidget *parent, NetworkCommunication *networkCommunication, int ID_List, OperationType type) :
     QWidget(parent),
@@ -126,9 +127,9 @@ void Records::on_btn_refresh_clicked()
     ui->tableWidget->setHorizontalHeaderLabels(COLUMN_NAMES[Tables::view_records]);
 
     // hide special columns
-    ui->tableWidget->setColumnHidden(VIEW__IDLIST_INDEX, true);
+    ui->tableWidget->setColumnHidden(VIEW_IDLIST_INDEX, true);
     ui->tableWidget->setColumnHidden(COLUMN_ID_INDEX[Tables::view_records], true);
-    ui->tableWidget->setColumnHidden(VIEW__IDPRODUCT_INDEX, true);
+    ui->tableWidget->setColumnHidden(VIEW_IDPRODUCT_INDEX, true);
 
     /* ROWS */
     if(recordsList.size() < 1)
@@ -304,10 +305,10 @@ void Records::update_line_sum()
     QVector<int> counts;
     double sum = 0.0;
     for(int row = 0; row < ui->tableWidget->rowCount(); ++row)
-        counts.push_back(ui->tableWidget->item(row, VIEW__COUNT_INDEX)->data(Qt::DisplayRole).toInt());
+        counts.push_back(ui->tableWidget->item(row, VIEW_COUNT_INDEX)->data(Qt::DisplayRole).toInt());
 
     for(int row = 0; row < ui->tableWidget->rowCount(); ++row)
-        sum += counts[row] * ui->tableWidget->item(row, VIEW__PRICE_INDEX)->data(Qt::DisplayRole).toDouble();
+        sum += counts[row] * ui->tableWidget->item(row, VIEW_PRICE_INDEX)->data(Qt::DisplayRole).toDouble();
 
     ui->line_sum->setText(QString::number(sum, 'f', 2));
 }
@@ -329,14 +330,14 @@ void Records::changeListNumber(int number)
 
 void Records::handleChangingForExistingRow(int row, int column, QString data)
 {
-    if(column == VIEW__CODE_INDEX ||
-       column == VIEW__COUNT_INDEX ||
-       column == VIEW__PRICE_INDEX
+    if(column == VIEW_CODE_INDEX ||
+       column == VIEW_COUNT_INDEX ||
+       column == VIEW_PRICE_INDEX
        )
     {
         switch (column) {
             /* CODE COLUMN */
-            case VIEW__CODE_INDEX:
+            case VIEW_CODE_INDEX:
             {
                 QString ID_Product = find_IDProduct_by_Code(data);
 
@@ -347,18 +348,26 @@ void Records::handleChangingForExistingRow(int row, int column, QString data)
                 // IF THERE IS NO SUCH PRODUCT THEN 'CREATE NEW?'
                 else
                 {
-                /* ------------ TODO CREATING NEW ProductType ----------- */
+                    /* ------------ CREATING Product AND ADDING TO DB NEW Record ----------- */
+
+                    QString ID_Product = createNewProduct();
+
+                    if(ID_Product != "-1")
+                        addNewRecordToDB(ID_Product);
+                    else
+                        QMessageBox::critical(nullptr, "Помилка Records", "handleChangingForExistingRow", QMessageBox::Ok);
+
                 }
             } break;
 
             /* COUNT COLUMN */
-            case VIEW__COUNT_INDEX:
+            case VIEW_COUNT_INDEX:
             {
                 edit_cell(row, "Count=" + data);
             } break;
 
             /* PRICE COLUMN */
-            case VIEW__PRICE_INDEX:
+            case VIEW_PRICE_INDEX:
             {
                 edit_cell(row, "Price=" + data);
             } break;
@@ -373,35 +382,31 @@ void Records::handleChangingForExistingRow(int row, int column, QString data)
 
 void Records::handleChangingForNonExistingRow(int row, int column, QString data)
 {
-    if(column == VIEW__CODE_INDEX)
+    if(column == VIEW_CODE_INDEX)
     {
         // getting data
         QString ID_Product = find_IDProduct_by_Code(data);
 
         if(ID_Product != "")
         {
-            // INSERT INTO Records(ID, ID_List, ID_Product) VALUES(NULL, 2, 3);
-            QStringList requestList = {
-                SERVER_API[Api::_add],
-                DATABASE_TABLES[Tables::records] + "(ID, ID_List, ID_Product, Count, Price)",
-                "NULL", // autoincremented
-                QString::number(ID_List),
-                ID_Product,
-                "0",
-                "0.0"
-            };
-
-            emit networkCommunication->requestReady(requestList.join(DELIMITERS[Delimiters::primary]));
-
-            if(networkCommunication->getResponseWhenReady() == "-1")
-                QMessageBox::critical(nullptr, "Помилка Records", "handleChangingForNonExistingRow", QMessageBox::Ok);
+            addNewRecordToDB(ID_Product);
         }
         // IF THERE IS NO SUCH PRODUCT THEN 'CREATE NEW?'
         else
         {
-            QMessageBox::information(this, "Створення", "Створити новий вид товару?", QMessageBox::Yes | QMessageBox::No);
+            auto answer = QMessageBox::information(this, "Створення", "Створити новий вид товару?", QMessageBox::Yes | QMessageBox::No);
 
-            /* ------------ TODO CREATING NEW ProductType ----------- */
+            if(answer == QMessageBox::Yes)
+            {
+                /* ------------ CREATING Product AND ADDING TO DB NEW Record ----------- */
+
+                QString ID_Product = createNewProduct();
+
+                if(ID_Product != "-1")
+                    addNewRecordToDB(ID_Product);
+                else
+                    QMessageBox::critical(nullptr, "Помилка Records", "handleChangingForNonExistingRow", QMessageBox::Ok);
+            }
         }
 
         // updating table
@@ -458,6 +463,39 @@ int Records::getNextNumberforListType(int type_index)
     QString number = response.split(DELIMITERS[Delimiters::primary]).at(0);
 
     return number.toInt() + 1;
+}
+
+QString Records::createNewProduct()
+{
+    AddProduct *dlg = new AddProduct(this, networkCommunication);
+    if(dlg->exec() == QDialog::Accepted)
+        return dlg->getID_Product();
+    else
+        return "-1";
+}
+
+bool Records::addNewRecordToDB(QString ID_Product)
+{
+    // INSERT INTO Records(ID, ID_List, ID_Product) VALUES(NULL, 2, 3);
+    QStringList requestList = {
+        SERVER_API[Api::_add],
+        DATABASE_TABLES[Tables::records] + "(ID, ID_List, ID_Product, Count, Price)",
+        "NULL", // autoincremented
+        QString::number(ID_List),
+        ID_Product,
+        "0",
+        "0.0"
+    };
+
+    emit networkCommunication->requestReady(requestList.join(DELIMITERS[Delimiters::primary]));
+
+    if(networkCommunication->getResponseWhenReady() == "-1")
+    {
+        QMessageBox::critical(nullptr, "Помилка Records", "addNewRecord", QMessageBox::Ok);
+        return false;
+    }
+
+    return true;
 }
 
 

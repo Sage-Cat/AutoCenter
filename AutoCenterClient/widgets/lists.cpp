@@ -167,7 +167,7 @@ void Lists::on_radio_not_org_clicked()
             ui->tableWidget->setRowHidden(row, true);
 }
 
-void Lists::on_tableWidget_cellDoubleClicked(int row, int column)
+void Lists::on_tableWidget_cellDoubleClicked(int row, int)
 {
     int ID_List = ui->tableWidget->item(row, COLUMN_ID_INDEX[Tables::view_lists])->data(Qt::DisplayRole).toInt();
 
