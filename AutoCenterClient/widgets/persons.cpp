@@ -3,6 +3,8 @@
 
 #include <QMessageBox>
 
+#include "dialogs/addperson.h"
+
 Persons::Persons(QWidget *parent, NetworkCommunication *networkCommunication, Tables table) :
     QWidget(parent),
     ui(new Ui::Persons),
@@ -19,6 +21,8 @@ Persons::Persons(QWidget *parent, NetworkCommunication *networkCommunication, Ta
     }
     else if(table == Tables::users)
         ui->btn_cars->setHidden(true);
+
+    on_btn_refresh_clicked();
 }
 
 Persons::~Persons()
@@ -28,31 +32,35 @@ Persons::~Persons()
 
 void Persons::on_btn_add_clicked()
 {
-    openEditDialog(Api::_add);
-    on_btn_refresh_clicked();
+    openEditDialog("NULL"); // if add then ID autoincremented
 }
 
 
 void Persons::on_btn_del_clicked()
 {
-    auto selectedRows = ui->tableWidget->selectionModel()->selectedRows(COLUMN_ID_INDEX[table]); // taking ID from view
-    if(selectedRows.size() < 1)
-        return;
+    auto result = QMessageBox::information(nullptr, "Видалення", "Ви впевнені, що хочете видалити цей запис?", QMessageBox::Yes | QMessageBox::No);
 
-    QString ID = selectedRows.at(0).data(Qt::DisplayRole).toString();
+    if(result == QMessageBox::Yes)
+    {
+        auto selectedRows = ui->tableWidget->selectionModel()->selectedRows(COLUMN_ID_INDEX[table]); // taking ID from view
+        if(selectedRows.size() < 1)
+            return;
 
-    QStringList requestList = {
-        SERVER_API[Api::_del],
-        DATABASE_TABLES[table], // deleting from table
-        "ID=" + ID
-    };
+        QString ID = selectedRows.at(0).data(Qt::DisplayRole).toString();
 
-    emit networkCommunication->requestReady(requestList.join(DELIMITERS[Delimiters::primary]));
+        QStringList requestList = {
+            SERVER_API[Api::_del],
+            DATABASE_TABLES[table], // deleting from table
+            "ID=" + ID
+        };
 
-    if(networkCommunication->getResponseWhenReady() != "1")
-        QMessageBox::critical(nullptr, "Помилка Persons", "on_btn_del_clicked: Table=" + DATABASE_TABLES[table], QMessageBox::Ok);
+        emit networkCommunication->requestReady(requestList.join(DELIMITERS[Delimiters::primary]));
 
-    on_btn_refresh_clicked();
+        if(networkCommunication->getResponseWhenReady() != "1")
+            QMessageBox::critical(nullptr, "Помилка Persons", "on_btn_del_clicked: Table=" + DATABASE_TABLES[table], QMessageBox::Ok);
+
+        on_btn_refresh_clicked();
+    }
 
 }
 
@@ -79,7 +87,7 @@ void Persons::on_btn_refresh_clicked()
     ui->tableWidget->setColumnCount(column_count);
     ui->tableWidget->setHorizontalHeaderLabels(COLUMN_NAMES[table]);
 
-    // hide ID (last column)
+    // hide ID
     ui->tableWidget->setColumnHidden(COLUMN_ID_INDEX[table], true);
 
     /* ROWS */
@@ -113,12 +121,16 @@ void Persons::on_btn_info_clicked()
 
 void Persons::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
 {
-    openEditDialog(Api::_edit);
-    on_btn_refresh_clicked();
+    QString ID = ui->tableWidget->item(item->row(), COLUMN_ID_INDEX[table])->data(Qt::DisplayRole).toString();
+
+    openEditDialog(ID);
 }
 
-void Persons::openEditDialog(Api type)
+void Persons::openEditDialog(QString ID)
 {
+    AddPerson *dlg = new AddPerson(this, networkCommunication, table, ID);
+    if(dlg->exec() == QDialog::Accepted)
+        on_btn_refresh_clicked();
 }
 
 

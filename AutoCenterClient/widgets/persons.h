@@ -31,7 +31,8 @@ private slots:
     void on_btn_cars_clicked();
 
 public /* methods */:
-    void openEditDialog(Api type);
+    //! IF ID NOT 'NULL' THEN REPLACE (EDIT) RECORD
+    void openEditDialog(QString ID);
 
 signals:
     void tabInfoRequested(Tables info_view);

@@ -30,6 +30,13 @@ public slots:
     void on_act_allSales_triggered();
     void on_act_allReceipts_triggered();
 
+private slots:
+    void on_act_customers_triggered();
+
+    void on_act_sellers_triggered();
+
+    void on_act_users_triggered();
+
 private:
     Ui::MainWindow *ui;
     TcpClient *tcpClient;

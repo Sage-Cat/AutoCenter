@@ -9,6 +9,7 @@ CONFIG += c++14
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the Apis deprecated before Qt 6.0.0
 
 SOURCES += \
+    dialogs/addperson.cpp \
     dialogs/changelisttype.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 
 
 HEADERS += \
+    dialogs/addperson.h \
     dialogs/changelisttype.h \
     mainwindow.h \
     networkcommunication.h \
@@ -33,6 +35,7 @@ HEADERS += \
 
 
 FORMS += \
+    dialogs/addperson.ui \
     dialogs/changelisttype.ui \
     mainwindow.ui \
     widgets/info.ui \

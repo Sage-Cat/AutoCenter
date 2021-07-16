@@ -6,6 +6,7 @@
 #include "widgets/lists.h"
 #include "widgets/records.h"
 #include "widgets/info.h"
+#include "widgets/persons.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -64,7 +65,9 @@ void MainWindow::openTabRecords(int ID_List, OperationType type)
 
 void MainWindow::openTabInfo(Tables table, int ID)
 {
-
+    Info *tab = new Info(this, networkCommunication, table, ID);
+    ui->tabWidget->addTab(tab, QIcon(":/icons/info.png"), "Інформація");
+    ui->tabWidget->setCurrentWidget(tab);
 }
 
 void MainWindow::on_act_allSales_triggered()
@@ -76,3 +79,27 @@ void MainWindow::on_act_allReceipts_triggered()
 {
     openTabLists(OperationType::receipt);
 }
+
+void MainWindow::on_act_customers_triggered()
+{
+    Persons *tab = new Persons(this, networkCommunication, Tables::customers);
+    ui->tabWidget->addTab(tab, QIcon(":/icons/customer.png"), "Покупці");
+    ui->tabWidget->setCurrentWidget(tab);
+}
+
+
+void MainWindow::on_act_sellers_triggered()
+{
+    Persons *tab = new Persons(this, networkCommunication, Tables::sellers);
+    ui->tabWidget->addTab(tab, QIcon(":/icons/seller.png"), "Продавці");
+    ui->tabWidget->setCurrentWidget(tab);
+}
+
+
+void MainWindow::on_act_users_triggered()
+{
+    Persons *tab = new Persons(this, networkCommunication, Tables::users);
+    ui->tabWidget->addTab(tab, QIcon(":/icons/crown.png"), "Користувачі");
+    ui->tabWidget->setCurrentWidget(tab);
+}
+

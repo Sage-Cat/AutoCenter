@@ -16,6 +16,11 @@ typedef std::vector<QStringList> RecordsList;
 
 const int ERROR_CODE = -1;
 
+// to registrate new admin, setup number manually
+const QStringList ADMINS_NUMBERS = {
+    "111"
+};
+
 enum OperationType {
     sale = 0,
     receipt
@@ -136,24 +141,23 @@ const QMap<Tables, QStringList> COLUMN_NAMES = {
     {
         Tables::sellers,
         {
-            "Ім'я", "IBAN", "Банк",
-            "ЄДРПОУ", "ІПН", "Адреса",
-            "ID"
+            "ID", "Ім'я", "IBAN", "Банк",
+            "ЄДРПОУ", "ІПН", "Адреса"
         }
     },
     {
         Tables::customers,
         {
-            "Ім'я", "IBAN", "Банк",
+            "ID", "Ім'я", "IBAN", "Банк",
             "ЄДРПОУ", "ІПН", "Адреса",
-            "Телефон", "Ел. пошта", "ID"
+            "Телефон", "Ел. пошта"
         }
     },
     {
         Tables::users,
         {
-            "Ім'я", "Телефон", "Ел. пошта",
-            "ІПН", "Пароль", "ID"
+            "ID", "Ім'я", "ІПН", "Телефон",
+            "Ел. пошта", "Пароль", "Адміністратор"
         }
     },
     {
