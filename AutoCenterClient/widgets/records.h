@@ -55,7 +55,7 @@ private /* methods */:
 
     /* for itemChanged ACTION */
     void handleChangingForExistingRow(int row, int column, QString data);
-    void handleChangingForNonExistingRow(int row, int column, QString data);
+    void handleChangingForNonExistingRow(int column, QString data);
 
     //! example: row=5, data='Count=3'
     void edit_cell(int row, QString data);

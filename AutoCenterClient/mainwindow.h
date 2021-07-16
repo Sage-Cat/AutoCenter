@@ -25,6 +25,7 @@ public slots:
 
     void openTabLists(OperationType type);
     void openTabRecords(int ID_List, OperationType type);
+    void openTabPersons(Tables table, QIcon icon, QString label);
     void openTabInfo(Tables table, int ID);
 
     void on_act_allSales_triggered();
@@ -32,9 +33,7 @@ public slots:
 
 private slots:
     void on_act_customers_triggered();
-
     void on_act_sellers_triggered();
-
     void on_act_users_triggered();
 
 private:

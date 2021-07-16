@@ -35,7 +35,7 @@ public /* methods */:
     void openEditDialog(QString ID);
 
 signals:
-    void tabInfoRequested(Tables info_view);
+    void tabInfoRequested(Tables info_view, int ID);
 
 private:
     Ui::Persons *ui;

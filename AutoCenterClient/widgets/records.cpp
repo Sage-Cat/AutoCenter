@@ -166,7 +166,7 @@ void Records::on_tableWidget_itemChanged(QTableWidgetItem *item)
         if(ui->tableWidget->item(row, COLUMN_ID_INDEX[Tables::view_records])->data(Qt::DisplayRole).toString() != "")
             handleChangingForExistingRow(row, column, data);
         else
-            handleChangingForNonExistingRow(row, column, data);
+            handleChangingForNonExistingRow(column, data);
     }
 }
 
@@ -380,7 +380,7 @@ void Records::handleChangingForExistingRow(int row, int column, QString data)
     }
 }
 
-void Records::handleChangingForNonExistingRow(int row, int column, QString data)
+void Records::handleChangingForNonExistingRow(int column, QString data)
 {
     if(column == VIEW_CODE_INDEX)
     {

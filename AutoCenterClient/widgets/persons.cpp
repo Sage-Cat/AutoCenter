@@ -112,10 +112,18 @@ void Persons::on_btn_refresh_clicked()
 
 void Persons::on_btn_info_clicked()
 {
+    auto selectedItemsList = ui->tableWidget->selectedItems();
+
+    if(selectedItemsList.size() < 1)
+        return;
+
+    int row = selectedItemsList.at(0)->row();
+    int selectedID = ui->tableWidget->item(row, COLUMN_ID_INDEX[table])->data(Qt::DisplayRole).toInt();
+
     if(table == Tables::customers)
-        emit tabInfoRequested(Tables::info_customer);
+        emit tabInfoRequested(Tables::info_customer, selectedID);
     else if(table == Tables::users)
-        emit tabInfoRequested(Tables::info_user);
+        emit tabInfoRequested(Tables::info_user, selectedID);
 }
 
 

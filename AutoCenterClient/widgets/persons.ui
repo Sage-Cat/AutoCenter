@@ -149,6 +149,10 @@
        <property name="text">
         <string/>
        </property>
+       <property name="icon">
+        <iconset resource="../recources/recources.qrc">
+         <normaloff>:/icons/car.png</normaloff>:/icons/car.png</iconset>
+       </property>
        <property name="shortcut">
         <string>Del</string>
        </property>

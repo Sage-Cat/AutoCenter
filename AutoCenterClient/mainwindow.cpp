@@ -52,6 +52,7 @@ void MainWindow::openTabLists(OperationType type)
         label = "Усі надходження";
 
     ui->tabWidget->addTab(tab, QIcon(":/icons/page.png"), label);
+    ui->tabWidget->setCurrentWidget(tab);
 
     connect(tab, &Lists::tabRecordsRequested, this, &MainWindow::openTabRecords);
 }
@@ -61,6 +62,15 @@ void MainWindow::openTabRecords(int ID_List, OperationType type)
     Records *tab = new Records(this, networkCommunication, ID_List, type);
     ui->tabWidget->addTab(tab, QIcon(":/icons/sale.png"), "Редагування списку");
     ui->tabWidget->setCurrentWidget(tab);
+}
+
+void MainWindow::openTabPersons(Tables table, QIcon icon, QString label)
+{
+    Persons *tab = new Persons(this, networkCommunication, table);
+    ui->tabWidget->addTab(tab, icon, label);
+    ui->tabWidget->setCurrentWidget(tab);
+
+    connect(tab, &Persons::tabInfoRequested, this, &MainWindow::openTabInfo);
 }
 
 void MainWindow::openTabInfo(Tables table, int ID)
@@ -82,24 +92,18 @@ void MainWindow::on_act_allReceipts_triggered()
 
 void MainWindow::on_act_customers_triggered()
 {
-    Persons *tab = new Persons(this, networkCommunication, Tables::customers);
-    ui->tabWidget->addTab(tab, QIcon(":/icons/customer.png"), "Покупці");
-    ui->tabWidget->setCurrentWidget(tab);
+    openTabPersons(Tables::customers, QIcon(":/icons/customer.png"), "Покупці");
 }
 
 
 void MainWindow::on_act_sellers_triggered()
 {
-    Persons *tab = new Persons(this, networkCommunication, Tables::sellers);
-    ui->tabWidget->addTab(tab, QIcon(":/icons/seller.png"), "Продавці");
-    ui->tabWidget->setCurrentWidget(tab);
+    openTabPersons(Tables::sellers, QIcon(":/icons/seller.png"), "Продавці");
 }
 
 
 void MainWindow::on_act_users_triggered()
 {
-    Persons *tab = new Persons(this, networkCommunication, Tables::users);
-    ui->tabWidget->addTab(tab, QIcon(":/icons/crown.png"), "Користувачі");
-    ui->tabWidget->setCurrentWidget(tab);
+    openTabPersons(Tables::users, QIcon(":/icons/crown.png"), "Користувачі");
 }
 
