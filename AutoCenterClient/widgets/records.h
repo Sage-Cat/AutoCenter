@@ -1,5 +1,5 @@
-#ifndef RECORDS_H
-#define RECORDS_H
+#ifndef _H
+#define _H
 
 #include <QWidget>
 #include <QTableWidgetItem>
@@ -55,7 +55,7 @@ private /* methods */:
 
     /* for itemChanged ACTION */
     void handleChangingForExistingRow(int row, int column, QString data);
-    void handleChangingForNonExistingRow(int row, int column, QString data);
+    void handleChangingForNonExistingRow(int column, QString data);
 
     //! example: row=5, data='Count=3'
     void edit_cell(int row, QString data);
@@ -63,6 +63,12 @@ private /* methods */:
     /* supporting */
     QString find_IDProduct_by_Code(QString code);
     int getNextNumberforListType(int type_index);
+
+    //! returns new ID_Product
+    QString createNewProduct();
+
+    //! adds to DB new record
+    bool addNewRecordToDB(QString ID_Product);
 
 private:
     Ui::Records *ui;
@@ -78,4 +84,4 @@ private:
     bool ignore_tableWidget_cells_changing;
 };
 
-#endif // RECORDS_H
+#endif // _H

@@ -1,6 +1,8 @@
 #include "lists.h"
 #include "ui_lists.h"
 
+#include "mainwindow.h"
+
 Lists::Lists(QWidget *parent, NetworkCommunication* networkCommunication, OperationType type) :
     QWidget(parent),
     ui(new Ui::Lists),
@@ -22,12 +24,12 @@ void Lists::on_btn_add_clicked()
 {
     // INSERT INTO Lists(ID_List) VALUES(NULL)
     QStringList requestList = {
-        SERVER_API[ServerAPI::records_add],
+        SERVER_API[Api::_add],
         DATABASE_TABLES[Tables::lists] + "(ID)",
         "NULL"
     };
     // send request
-    emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
+    emit networkCommunication->requestReady(requestList.join(DELIMITERS[Delimiters::primary]));
 
     // get response
     QString response = networkCommunication->getResponseWhenReady();
@@ -38,7 +40,7 @@ void Lists::on_btn_add_clicked()
     }
 
     // open records tab
-    emit tabRecordsRequested(response.toInt(), type);
+    emit this->tabRecordsRequested(response.toInt(), type);
 
     // refresh
     on_btn_refresh_clicked();
@@ -46,7 +48,7 @@ void Lists::on_btn_add_clicked()
 
 void Lists::on_btn_del_clicked()
 {
-    auto listOf_selected_IDs = ui->tableWidget->selectionModel()->selectedRows(VIEW_LISTS_ID_INDEX);
+    auto listOf_selected_IDs = ui->tableWidget->selectionModel()->selectedRows(COLUMN_ID_INDEX[Tables::view_lists]);
     if(listOf_selected_IDs.size() < 1)
         return;
     QString ID_List = listOf_selected_IDs.at(0).data().toString();
@@ -57,13 +59,13 @@ void Lists::on_btn_del_clicked()
     {
         // del:[table_name]:[condition]
         QStringList requestList = {
-            SERVER_API[ServerAPI::records_delete],
+            SERVER_API[Api::_del],
             DATABASE_TABLES[Tables::lists],
             "ID=" + ID_List
         };
 
         // send request
-        emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
+        emit networkCommunication->requestReady(requestList.join(DELIMITERS[Delimiters::primary]));
         // get response
         if(networkCommunication->getResponseWhenReady() != "1")
             QMessageBox::critical(nullptr, "Помилка Lists", "on_btn_del_clicked can't delete record", QMessageBox::Ok);
@@ -93,27 +95,27 @@ void Lists::on_btn_refresh_clicked()
     }
 
     QStringList requestList = {
-        SERVER_API[ServerAPI::records_get],
-        DATABASE_TABLES[Tables::lists_view],
+        SERVER_API[Api::_get],
+        DATABASE_TABLES[Tables::view_lists],
         condition
     };
 
     // SEND REQUEST
-    emit networkCommunication->requestReady(requestList.join(DELIMITERS[delims::primary]));
+    emit networkCommunication->requestReady(requestList.join(DELIMITERS[Delimiters::primary]));
 
     // GET RESPONSE (parsing it to the list of records)
     RecordsList recordsList;
-    for(const auto &record : networkCommunication->getResponseWhenReady().split(DELIMITERS[delims::primary]))
-        recordsList.push_back(record.split(DELIMITERS[delims::secondary]));
+    for(const auto &record : networkCommunication->getResponseWhenReady().split(DELIMITERS[Delimiters::primary]))
+        recordsList.push_back(record.split(DELIMITERS[Delimiters::secondary]));
 
     /* COLUMNS */
-    int column_count = LISTS_COLUMNS_NAMES.size();
+    int column_count = COLUMN_NAMES[Tables::view_lists].size();
 
     ui->tableWidget->setColumnCount(column_count);
-    ui->tableWidget->setHorizontalHeaderLabels(LISTS_COLUMNS_NAMES);
+    ui->tableWidget->setHorizontalHeaderLabels(COLUMN_NAMES[Tables::view_lists]);
 
     // hide id and id_list columns
-    ui->tableWidget->setColumnHidden(VIEW_LISTS_ID_INDEX, true);
+    ui->tableWidget->setColumnHidden(COLUMN_ID_INDEX[Tables::view_lists], true);
     ui->tableWidget->setColumnHidden(VIEW_LISTS_IPN_INDEX, true);
 
     /* ROWS */
@@ -133,9 +135,9 @@ void Lists::on_btn_refresh_clicked()
         for(int col = 0; col < column_count; ++col)
             if(col == VIEW_LISTS_LISTTYPE_INDEX) // SPECIAL FOR ListType
             {
-                qsizetype listType = recordsList[row][col].toUInt();
-                if(listType < LISTTYPE_NAMES.size())
-                    ui->tableWidget->setItem(row, col, new QTableWidgetItem(LISTTYPE_NAMES[listType]));
+                ListTypes listType = static_cast<ListTypes>(recordsList[row][col].toInt());
+                if(listType < LIST_TYPES.size())
+                    ui->tableWidget->setItem(row, col, new QTableWidgetItem(LIST_TYPES[listType]));
             }
             else
                 ui->tableWidget->setItem(row, col, new QTableWidgetItem(recordsList[row][col]));
@@ -165,9 +167,9 @@ void Lists::on_radio_not_org_clicked()
             ui->tableWidget->setRowHidden(row, true);
 }
 
-void Lists::on_tableWidget_cellDoubleClicked(int row, int column)
+void Lists::on_tableWidget_cellDoubleClicked(int row, int)
 {
-    int ID_List = ui->tableWidget->item(row, VIEW_LISTS_ID_INDEX)->data(Qt::DisplayRole).toInt();
+    int ID_List = ui->tableWidget->item(row, COLUMN_ID_INDEX[Tables::view_lists])->data(Qt::DisplayRole).toInt();
 
     // open records tab
     emit tabRecordsRequested(ID_List, type);

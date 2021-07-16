@@ -41,15 +41,15 @@ void TcpClient::sendAndGetResponse(const QString &request)
     if(connect())
     {
         /* SENDING */
-        QByteArray msg = ("client" + DELIMITERS[delims::primary] + UID + DELIMITERS[delims::primary] + request).toUtf8();
+        QByteArray msg = ("client" + DELIMITERS[Delimiters::primary] + UID + DELIMITERS[Delimiters::primary] + request).toUtf8();
         socket->write(msg);
         socket->waitForBytesWritten(2000);
 
         /* GETTING THE RESPONSE */
         socket->waitForReadyRead(5000);
 
-        while(response.mid(0, QString("server" + DELIMITERS[delims::primary]).length())
-              != "server" + DELIMITERS[delims::primary]) // skip packages from unknown source
+        while(response.mid(0, QString("server" + DELIMITERS[Delimiters::primary]).length())
+              != "server" + DELIMITERS[Delimiters::primary]) // skip packages from unknown source
         {
             if(socket->bytesAvailable())
                 response += QString(socket->readAll());
@@ -61,7 +61,7 @@ void TcpClient::sendAndGetResponse(const QString &request)
         }
 
         /* SETTING THE RESPONSE */
-        response.remove(0, QString("server" + DELIMITERS[delims::primary]).length());
+        response.remove(0, QString("server" + DELIMITERS[Delimiters::primary]).length());
 
         s_response = response;
         s_semaphore.release();

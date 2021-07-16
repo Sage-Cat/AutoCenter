@@ -32,7 +32,7 @@ private slots:
     void on_radio_org_clicked();
     void on_radio_not_org_clicked();
 
-    void on_tableWidget_cellDoubleClicked(int row, int column);
+    void on_tableWidget_cellDoubleClicked(int row, int);
 
 private:
     Ui::Lists *ui;
